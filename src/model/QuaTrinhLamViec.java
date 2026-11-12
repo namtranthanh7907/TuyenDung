@@ -1,6 +1,11 @@
 package model;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -48,10 +53,14 @@ public class QuaTrinhLamViec {
      * 
      */
     private String thanhTich;
+    
+    private String linhVuc;
 
 
-    public QuaTrinhLamViec(String tgianBD, String tgKetThuc, String viTri, String tenCongTy, String sdt_nguoiLH,
-			String moTaCongViec, String thanhTich) {
+
+    
+	public QuaTrinhLamViec(String tgianBD, String tgKetThuc, String viTri, String tenCongTy, String sdt_nguoiLH,
+			String moTaCongViec, String thanhTich, String linhVuc) {
 		super();
 		this.tgianBD = tgianBD;
 		this.tgKetThuc = tgKetThuc;
@@ -60,9 +69,23 @@ public class QuaTrinhLamViec {
 		this.sdt_nguoiLH = sdt_nguoiLH;
 		this.moTaCongViec = moTaCongViec;
 		this.thanhTich = thanhTich;
+		this.linhVuc = linhVuc;
+	}
+	
+	
+
+	public String getLinhVuc() {
+		return linhVuc;
 	}
 
-    
+
+
+	public void setLinhVuc(String linhVuc) {
+		this.linhVuc = linhVuc;
+	}
+
+
+
 	public String getTgianBD() {
 		return tgianBD;
 	}
@@ -131,31 +154,73 @@ public class QuaTrinhLamViec {
 	public void setThanhTich(String thanhTich) {
 		this.thanhTich = thanhTich;
 	}
-
+	
+	public LocalDate layNgayBatDau() {
+		return TienIch.parseNgay(tgianBD);
+	}
+	
+	public LocalDate layNgayKetThuc() {
+		if(tinhTrangLamViec()) {
+			return LocalDate.now();
+		}
+		return TienIch.parseNgay(tgKetThuc);
+	}
 
 	/**
      * @return
      */
-    public int tinhSoThangLamViec() {
-        // TODO implement here
-        return 0;
-    }
 
     /**
      * @return
      */
     public boolean tinhTrangLamViec() {
-        // TODO implement here
-        return false;
+    	if (tgKetThuc == null || tgKetThuc.trim().isEmpty()) {
+            return true;
+        }
+        String ketThuc = TienIch.chuanHoa(tgKetThuc);
+        
+        return "nay".equals(ketThuc);
+    }
+    
+    public boolean hopLe() {
+    	LocalDate batDau = layNgayBatDau();
+    	LocalDate ketThuc = layNgayKetThuc();
+    	
+    	return batDau != null && ketThuc != null && !ketThuc.isBefore(batDau);
     }
 
+    public int tinhSoThangLamViec() {
+    	if(!hopLe()) {
+    		return 0;
+    	}
+    	
+    	LocalDate batDat = layNgayBatDau();
+    	LocalDate ketThuc = layNgayKetThuc();
+    	long soThang = ChronoUnit.MONTHS.between(batDat, ketThuc.plusDays(1));
+    	
+    	if(soThang <= 0) {
+    		return 0;
+    	}
+    	
+    	return soThang > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) soThang;
+    }
+    
     /**
-     * @param vitri 
+     * @param vitri
      * @return
      */
-    public void capNhatQuaTrinhLamViec(String vitri) {
-        // TODO implement here
-        
+    
+    
+    
+    public void capNhatQuaTrinhLamViec(String vitriMoi) {
+        if(vitriMoi == null || vitriMoi.trim().isEmpty()) {
+        	return;
+        }
+        this.viTri = vitriMoi.trim();
     }
-
+    
+    public String toString() {
+    	return viTri + " tai " + tenCongTy + " (" + tgianBD + " - " + (tinhTrangLamViec() ? "nay" : tgKetThuc)
+    			+ "), linh vuc: " + linhVuc;
+    }
 }

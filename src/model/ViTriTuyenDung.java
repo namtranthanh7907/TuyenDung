@@ -88,15 +88,15 @@ public class ViTriTuyenDung {
 		this.maxLuong = maxLuong;
 		this.minLuong = minLuong;
 		this.dsHoSoUngVien = dsHoSoUngVien;
-		this.dsYeuCauTuyenDung = new PriorityQueue<>(
-				new Comparator<AYeuCauTuyenDung>() {
-
-					@Override
-					public int compare(AYeuCauTuyenDung o1, AYeuCauTuyenDung o2) {
-						return Integer.compare(o2.getDoUuTien(), o1.getDoUuTien());
-					}
-					
-				});
+		this.dsYeuCauTuyenDung = new PriorityQueue<>(new Comparator<AYeuCauTuyenDung>() {
+		    @Override
+		    public int compare(AYeuCauTuyenDung o1, AYeuCauTuyenDung o2) {
+		        return Integer.compare(o2.getDoUuTien(), o1.getDoUuTien());
+		    }
+		});
+		if(dsYeuCauTuyenDung != null) {
+		    this.dsYeuCauTuyenDung.addAll(dsYeuCauTuyenDung);
+		}
 		
 		this.maViTri = maViTri;
 		this.moTaCongViec = moTaCongViec;
@@ -116,15 +116,15 @@ public class ViTriTuyenDung {
 		this.maxLuong = maxLuong;
 		this.minLuong = minLuong;
 		this.dsHoSoUngVien = new HashSet<>();
-		this.dsYeuCauTuyenDung = new PriorityQueue<>(
-				new Comparator<AYeuCauTuyenDung>() {
-
-					@Override
-					public int compare(AYeuCauTuyenDung o1, AYeuCauTuyenDung o2) {
-						return Integer.compare(o2.getDoUuTien(), o1.getDoUuTien());
-					}
-					
-				});;
+		this.dsYeuCauTuyenDung = new PriorityQueue<>(new Comparator<AYeuCauTuyenDung>() {
+		    @Override
+		    public int compare(AYeuCauTuyenDung o1, AYeuCauTuyenDung o2) {
+		        return Integer.compare(o2.getDoUuTien(), o1.getDoUuTien());
+		    }
+		});
+		if(dsYeuCauTuyenDung != null) {
+		    this.dsYeuCauTuyenDung.addAll(dsYeuCauTuyenDung);
+		}
 		this.maViTri = maViTri;
 		this.moTaCongViec = moTaCongViec;
 		this.dsKetQua = new ArrayList<>();

@@ -22,7 +22,7 @@ public abstract class AYeuCauTuyenDung{
     /**
      * 
      */
-    private String doUuTien;
+    private int doUuTien;
 
     /**
      * 
@@ -37,10 +37,10 @@ public abstract class AYeuCauTuyenDung{
      */
     public abstract boolean kiemTra(HoSoUngVien hs);
 
-    public AYeuCauTuyenDung(String maYeuCau, String doUuTien, boolean batBuoc) {
+    public AYeuCauTuyenDung(String maYeuCau, int doUuTien, boolean batBuoc) {
 		super();
 		this.maYeuCau = maYeuCau;
-		this.doUuTien = doUuTien;
+		this.doUuTien = Math.max(1, Math.min(5, doUuTien));
 		this.batBuoc = batBuoc;
 	}
 
@@ -60,22 +60,27 @@ public abstract class AYeuCauTuyenDung{
 		this.batBuoc = batBuoc;
 	}
 
-	public void setDoUuTien(String doUuTien) {
-		this.doUuTien = doUuTien;
+	
+
+	public void setDoUuTien(int doUuTien) {
+		this.doUuTien = Math.max(1, Math.min(5, doUuTien));
 	}
 
 	/**
      * @return
      */
-    public int getDoUuTien() {
-        // TODO implement here
-        return 0;
-    }
-
+    
+	public int getDoUuTien() {
+		return doUuTien;
+	}
     /**
      * @param hs 
      * @return
      */
     public abstract double chamDiemUngVien(HoSoUngVien hs);
+
+	public String toString() {
+		return "Ma yeu cau: " + maYeuCau + ", Do uu tien: " + doUuTien + ", Bat buoc: " + batBuoc;
+	}
 
 }

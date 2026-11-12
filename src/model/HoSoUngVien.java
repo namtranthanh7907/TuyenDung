@@ -2,6 +2,10 @@ package model;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.*;
 
 /**
@@ -13,6 +17,7 @@ public class HoSoUngVien {
      * Default constructor
      */
     public HoSoUngVien() {
+    	this("", "", "", "", "", "", "", "", "", "", 0.0, 0.0);
     }
 
     /**
@@ -105,14 +110,14 @@ public class HoSoUngVien {
 		this.diaChiThuongTru = diaChiThuongTru;
 		this.gioiTinh = gioiTinh;
 		this.trinhDoHocVan = trinhDoHocVan;
-		this.linhVuc_KNghiem = linhVuc_KNghiem;
-		this.quaTrinhLamViec = quaTrinhLamViec;
+		this.linhVuc_KNghiem = (linhVuc_KNghiem == null) ? new HashMap<String, Integer>() : linhVuc_KNghiem;
+		this.quaTrinhLamViec = (quaTrinhLamViec == null) ? new Stack<QuaTrinhLamViec>() : quaTrinhLamViec;
 		this.email = email;
 		this.soDienThoai = soDienThoai;
 		this.bangCap = bangCap;
 		this.chuyenNghanh = chuyenNghanh;
 		this.chieuCao = chieuCao;
-		this.dsNgoaiNgu = dsNgoaiNgu;
+		this.dsNgoaiNgu = (dsNgoaiNgu == null) ? new HashMap<String, String>() : dsNgoaiNgu;
 		this.canNang = canNang;
 	}
 
@@ -220,7 +225,7 @@ public class HoSoUngVien {
 
 
 	public void setLinhVuc_KNghiem(HashMap<String, Integer> linhVuc_KNghiem) {
-		this.linhVuc_KNghiem = linhVuc_KNghiem;
+		this.linhVuc_KNghiem = (linhVuc_KNghiem == null) ? new HashMap<>() : linhVuc_KNghiem;
 	}
 
 
@@ -232,7 +237,7 @@ public class HoSoUngVien {
 
 
 	public void setQuaTrinhLamViec(Stack<QuaTrinhLamViec> quaTrinhLamViec) {
-		this.quaTrinhLamViec = quaTrinhLamViec;
+		this.quaTrinhLamViec = (quaTrinhLamViec == null) ? new Stack<>() : quaTrinhLamViec;
 	}
 
 
@@ -304,7 +309,7 @@ public class HoSoUngVien {
 
 
 	public void setDsNgoaiNgu(HashMap<String, String> dsNgoaiNgu) {
-		this.dsNgoaiNgu = dsNgoaiNgu;
+		this.dsNgoaiNgu = (dsNgoaiNgu == null) ? new HashMap<>() : dsNgoaiNgu;
 	}
 
 
@@ -323,11 +328,31 @@ public class HoSoUngVien {
 
 	/**
      * @return
+    
+     *
      */
+	
+	public LocalDate chuyenNgay(String ngay) {
+    	if(ngay == null || ngay.trim().isEmpty()) {
+    		return null;
+    	}
+    	
+    	try {
+    		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d/M/uuuu")
+    												.withResolverStyle(ResolverStyle.STRICT);
+    		return LocalDate.parse(ngay.trim(), dtf);
+    	} catch(DateTimeParseException e) {
+    		return null;
+    	}
+    }
+	
     public int tinhTuoi() {
-    	int namSinh = Integer.parseInt(ngaySinh.substring(ngaySinh.length() - 4));
-    	int namHienTai = Calendar.getInstance().get(Calendar.YEAR);
-       return namHienTai - namSinh;
+    	LocalDate sinh = chuyenNgay(ngaySinh);
+    	if(sinh == null || sinh.isAfter(LocalDate.now())) {
+    		return -1;
+    	}
+    	
+    	return Period.between(sinh, LocalDate.now()).getYears();
     }
 
     /**
@@ -335,31 +360,62 @@ public class HoSoUngVien {
      * @param soNam 
      * @return
      */
+    
+    public boolean kiemTraGiongNhau(String a, String b) {
+    	return a != null && b != null && !a.trim().isEmpty() && a.trim().equalsIgnoreCase(b.trim());
+    }
+    
+    
+
+    public String timKhoa(HashMap<String, ?> ds, String ten) {
+    	if(ds == null || ten == null || ten.trim().isEmpty()) {
+    		return null;
+    	}
+    	
+    	for(String key : ds.keySet()) {
+    		if(TienIch.khop(key, ten)) {
+    			return key;
+    		}
+    	}
+    	
+    	return null;
+    }
     public void themKinhNghiem(String linhVuc, int soNam) {
-        if(linhVuc == null || soNam < 0) {
+        if(linhVuc == null || linhVuc.trim().isEmpty() || soNam < 0) {
         	return;
         }
         
-        linhVuc_KNghiem.put(linhVuc, soNam);
+        if(linhVuc_KNghiem == null) {
+        	linhVuc_KNghiem = new HashMap<String, Integer>();
+        }
+        
+        String khoa = timKhoa(linhVuc_KNghiem, linhVuc);
+        
+        if(khoa == null) {
+        	khoa = linhVuc.trim();
+        }
+        
+        linhVuc_KNghiem.put(khoa, soNam);
         
     }
-
+    
     /**
      * @param linhvuc 
      * @return
      */
     public int laySoNamKinhNghiem(String linhVuc) {
-        if(linhVuc == null) {
+        if(linhVuc == null || linhVuc.trim().isEmpty() || linhVuc_KNghiem == null) {
         	return 0;
         }
         
-        Integer soNam = linhVuc_KNghiem.get(linhVuc);
-        
-        if(soNam == null) {
+        String khoa = timKhoa(linhVuc_KNghiem, linhVuc);
+        if(khoa == null) {
         	return 0;
-        } else {
-        	return soNam;
         }
+        
+        Integer soNam = linhVuc_KNghiem.get(khoa);
+        
+        return soNam == null || soNam < 0 ? 0 : soNam;
     }
 
     /**
@@ -368,11 +424,30 @@ public class HoSoUngVien {
      * @return
      */
     public void themNgoaiNgu(String ten, String trinhDo) {
-        if(ten == null || trinhDo == null) {
+        if(ten == null || trinhDo == null || ten.trim().isEmpty() || trinhDo.trim().isEmpty()) {
         	return;
         }
-        dsNgoaiNgu.put(ten, trinhDo);
         
+        if(dsNgoaiNgu == null) {
+        	dsNgoaiNgu = new HashMap<String, String>();
+        }
+        
+        String khoa = timKhoa(dsNgoaiNgu, ten);
+        if(khoa == null) {
+        	khoa = ten.trim();
+        }
+        dsNgoaiNgu.put(khoa, trinhDo.trim());
+        
+    }
+    
+    public String layTrinhDoNgoaiNgu(String ten) {
+    	if(ten == null || ten.trim().isEmpty() || dsNgoaiNgu == null) {
+    		return null;
+    	}
+    	
+    	String khoa = timKhoa(dsNgoaiNgu, ten);
+    	
+    	return khoa == null ? null : dsNgoaiNgu.get(khoa);
     }
 
     /**
@@ -383,6 +458,10 @@ public class HoSoUngVien {
         if(qt == null) {
         	return;
         }
+        
+        if(quaTrinhLamViec == null) {
+        	quaTrinhLamViec = new Stack<QuaTrinhLamViec>();
+        }
        
        quaTrinhLamViec.push(qt);
         
@@ -392,7 +471,7 @@ public class HoSoUngVien {
      * @return
      */
     public QuaTrinhLamViec layQuaTrinhLamViec() {
-        if(quaTrinhLamViec.isEmpty()) {
+        if(quaTrinhLamViec.isEmpty() || quaTrinhLamViec == null) {
         	return null;
         }
         
@@ -404,11 +483,7 @@ public class HoSoUngVien {
      * @return
      */
     public boolean kiemTraYeuCau(AYeuCauTuyenDung yc) {
-        if(yc == null) {
-        	return false;
-        }
-        
-        return yc.kiemTra(this);
+        return yc != null || yc.kiemTra(this);
     }
 
     /**
@@ -450,6 +525,77 @@ public class HoSoUngVien {
         
         this.diaChiThuongTru = diaChi;
         
+    }
+    
+    public int tinhSoThangLamViec(String linhVuc) {
+    	return ThongKeKinhNghiem.tinhSoThang(this, linhVuc);
+    }
+    
+    public int laySoNamKinhNghiemTongHop(String linhVuc) {
+    	return Math.max(laySoNamKinhNghiem(linhVuc), tinhSoThangLamViec(linhVuc) / 12);
+    }
+    
+    public String tomTatKinhNghiem(String linhVuc) {
+    	int thang = tinhSoThangLamViec(linhVuc);
+        if(thang == 0) {
+            return hoTen + ": chưa có kinh nghiệm trong lĩnh vực " + linhVuc;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(hoTen).append(": ");
+        if(thang >= 12) {
+            sb.append(thang / 12).append(" năm ");
+        }
+        if(thang % 12 > 0) {
+            sb.append(thang % 12).append(" tháng ");
+        }
+        sb.append("trong lĩnh vực ").append(linhVuc).append(". Chức vụ: ");
+        String dau = "";
+        for(QuaTrinhLamViec qt : quaTrinhLamViec) {
+            if(qt != null && ThongKeKinhNghiem.cungLinhVuc(qt, linhVuc)) {
+                sb.append(dau).append(qt.getViTri());
+                dau = ", ";
+            }
+        }
+        return sb.toString();
+    }
+    
+    public String tomTatLinhVuc() {
+    	if(quaTrinhLamViec == null || quaTrinhLamViec.isEmpty()) {
+    		return "Chua co kinh nghiem";
+    	}
+    	
+    	LinkedHashMap<String, String> dsLinhVuc = new LinkedHashMap<>();
+    	
+    	for(QuaTrinhLamViec qt : quaTrinhLamViec) {
+    		if(qt == null) {
+    			continue;
+    		}
+    		
+    		String lv = qt.getLinhVuc();
+    		
+    		if(lv == null || lv.trim().isEmpty()) {
+    			continue;
+    		}
+    		
+    		lv = lv.trim();
+    		
+    		String khoa = TienIch.chuanHoa(lv);
+    		
+    		if(!khoa.isEmpty()) {
+    			dsLinhVuc.putIfAbsent(khoa, lv);
+    		}
+    	}
+    	
+    	if(dsLinhVuc.isEmpty()) {
+    		return "Chua co linh vuc kinh nghiem hop le";
+    	}
+    	
+    	return String.join(", ", dsLinhVuc.values());
+    }
+    
+    public String toString() {
+    	return maHS + ", " + hoTen + ", " + ngaySinh + ", " + gioiTinh + ", "
+    			+ trinhDoHocVan + ", " + bangCap + ", " + chuyenNghanh;
     }
     
     public static void main(String[] args) {

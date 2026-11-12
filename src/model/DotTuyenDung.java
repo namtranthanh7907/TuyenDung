@@ -3,6 +3,8 @@ package model;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.*;
 
 /**
@@ -183,11 +185,28 @@ public class DotTuyenDung {
     
     //kiem tra xem ngay hom nay da het han cua dot tuyen dung chua
     public boolean kiemTraConHan() {
-    	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    	
-    	LocalDate han = LocalDate.parse(chuanHoaNgay(ngayHetHan), dtf);
-    	
-    	return !LocalDate.now().isAfter(han);
+    	if (ngayHetHan == null || ngayHetHan.trim().isEmpty()) {
+            return false;
+        }
+
+        try {
+            DateTimeFormatter dtf = DateTimeFormatter
+                    .ofPattern("dd/MM/uuuu")
+                    .withResolverStyle(ResolverStyle.STRICT);
+
+            String ngay = chuanHoaNgay(ngayHetHan.trim());
+
+            if (ngay == null) {
+                return false;
+            }
+
+            LocalDate han = LocalDate.parse(ngay, dtf);
+
+            return !LocalDate.now().isAfter(han);
+
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 
     
@@ -320,7 +339,7 @@ public class DotTuyenDung {
     	}
     	
     	for(ViTriTuyenDung vt : dsViTriTuyenDung) {
-    		if(vt != null || vt.kiemTraConChiTieu()) {
+    		if(vt != null && vt.kiemTraConChiTieu()) {
     			cnt++;
     		}
     	}

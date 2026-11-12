@@ -74,7 +74,7 @@ public class CongTy {
 		this.tenCT = tenCT;
 		this.linhVuc = linhVuc;
 		this.vonDL = vonDL;
-		this.dsDotTuyenDung = dsDotTuyenDung;
+		this.dsDotTuyenDung = (dsDotTuyenDung == null) ? new LinkedList<>() : dsDotTuyenDung;
 		this.ngayTL = ngayTL;
 		this.diaChi = diaChi;
 		this.email = email;
@@ -136,7 +136,11 @@ public class CongTy {
 	}
 
 	public void setDsDotTuyenDung(LinkedList<DotTuyenDung> dsDotTuyenDung) {
-		this.dsDotTuyenDung = dsDotTuyenDung;
+		if (dsDotTuyenDung == null) {
+	        this.dsDotTuyenDung = new LinkedList<>();
+	    } else {
+	        this.dsDotTuyenDung = dsDotTuyenDung;
+	    }
 	}
 
 	public String getNgayTL() {
@@ -182,6 +186,10 @@ public class CongTy {
         	return false;
         }
         
+        if(dsDotTuyenDung == null) {
+        	dsDotTuyenDung = new LinkedList<DotTuyenDung>();
+        }
+        
         if(timDotTuyenDung(dot.getId()) != null) {
         	return false;
         }
@@ -201,10 +209,12 @@ public class CongTy {
         }
         
         for(int i = 0; i < dsDotTuyenDung.size(); i++) {
-        	if(id.equals(dsDotTuyenDung.get(i).getId())) {
-        		dsDotTuyenDung.remove(i);
-        		return true;
-        	}
+        	 DotTuyenDung dtd = dsDotTuyenDung.get(i);
+
+             if (dtd != null && id.trim().equals(dtd.getId())) {
+                 dsDotTuyenDung.remove(i);
+                 return true;
+             }
         }
         return false;
     }
@@ -216,13 +226,14 @@ public class CongTy {
     
     //tim dot tuyen dung boi id
     public DotTuyenDung timDotTuyenDung(String id) {
-        if(id == null) {
-        	return null;
+    	if (id == null || id.trim().isEmpty() || dsDotTuyenDung == null) {
+            return null;
         }
-        for(DotTuyenDung dtd : dsDotTuyenDung) {
-        	if(dtd.getId().equals(id)) {
-        		return dtd;
-        	}
+
+        for (DotTuyenDung dtd : dsDotTuyenDung) {
+            if (dtd != null && id.trim().equals(dtd.getId())) {
+                return dtd;
+            }
         }
         return null;
     }
@@ -233,7 +244,19 @@ public class CongTy {
     
     //dem tong dot tuyen dung
     public int demSoDotTuyenDung() {
-        return dsDotTuyenDung.size();
+    	int cnt = 0;
+
+        if (dsDotTuyenDung == null) {
+            return cnt;
+        }
+
+        for (DotTuyenDung dtd : dsDotTuyenDung) {
+            if (dtd != null) {
+                cnt++;
+            }
+        }
+
+        return cnt;
     }
 
     /**
@@ -243,11 +266,18 @@ public class CongTy {
     
     //dem tong vi tri tuyen dung
     public int demTongViTriTuyenDung() {
-        int cnt = 0;
-        
-        for(DotTuyenDung dtd : dsDotTuyenDung) {
-        	cnt += dtd.demSoViTri();
+    	int cnt = 0;
+
+        if (dsDotTuyenDung == null) {
+            return cnt;
         }
+
+        for (DotTuyenDung dtd : dsDotTuyenDung) {
+            if (dtd != null) {
+                cnt += dtd.demSoViTri();
+            }
+        }
+
         return cnt;
         
     }
@@ -338,25 +368,25 @@ public class CongTy {
     //tim dot tuyen dung chi tieu cao nhat
     public DotTuyenDung timDotTuyenDungChiTieuCaoNhat() {
     	DotTuyenDung dotMax = null;
-    	int maxChiTieu = 0;
-    	
-    	if(dsDotTuyenDung == null) {
-    		return null;
-    	}
-    	
-    	for(DotTuyenDung dtd : dsDotTuyenDung) {
-    		if(dtd == null) {
-    			continue;
-    		}
-    		
-    		int chiTieu = dtd.tongChiTieuTuyenDung();
-    		
-    		if(chiTieu > maxChiTieu) {
-    			maxChiTieu = chiTieu;
-    			dotMax = dtd;
-    		}
-    	}
-    	return dotMax;
+
+        if (dsDotTuyenDung == null) {
+            return null;
+        }
+
+        for (DotTuyenDung dtd : dsDotTuyenDung) {
+            if (dtd == null) {
+                continue;
+            }
+
+            int chiTieu = dtd.tongChiTieuTuyenDung();
+
+            if (dotMax == null ||
+                chiTieu > dotMax.tongChiTieuTuyenDung()) {
+                dotMax = dtd;
+            }
+        }
+
+        return dotMax;
     }
     
     //tim dot tuyen dung chi tieu thap nhat
@@ -405,7 +435,7 @@ public class CongTy {
     //tim dot tuyen dung co nhieu ho so ung tuyen nhat
     public DotTuyenDung timDotTuyenDungCoNhieuHoSoNhat() {
     	DotTuyenDung dotMax = null;
-    	int maxHoSo = 0;
+    	int maxHoSo = -1;
     	
     	if(dsDotTuyenDung == null) {
     		return null;

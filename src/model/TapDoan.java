@@ -1,6 +1,7 @@
 package model;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -38,7 +39,12 @@ public class TapDoan {
 		super();
 		this.id = id;
 		this.ten = ten;
-		this.dsCongTy = dsCongTy;
+		if(dsCongTy == null) {
+			this.dsCongTy = new ArrayList().listIterator();
+		} else {
+			this.dsCongTy = dsCongTy;
+		}
+		
 	}
     
     
@@ -80,7 +86,11 @@ public class TapDoan {
 
 
 	public void setDsCongTy(ListIterator<CongTy> dsCongTy) {
-		this.dsCongTy = dsCongTy;
+		if(dsCongTy == null) {
+			this.dsCongTy = new ArrayList().listIterator();
+		} else {
+			this.dsCongTy = dsCongTy;
+		}
 	}
 
 	//khi listiterator chay toi cuoi se khong con gi nua nen phai de no refresh lai tu dau
@@ -97,12 +107,16 @@ public class TapDoan {
      */
 	//tinh tong von tap toan tu danh sach cong ty
     public double tongVonTapDoan() {
-        double res = 0;
-        refresh();
-        while(dsCongTy.hasNext()) {
-        	res += dsCongTy.next().getVonDL();
-        }
-        return res;
+    	double res = 0;
+    	
+    	ArrayList<CongTy> ds = layDanhSachCongTy();
+    	
+    	for(CongTy ct : ds) {
+    		if(ct != null) {
+    			res += ct.getVonDL();
+    		}
+    	}
+    	return res;
     }
 
     /**
@@ -111,16 +125,20 @@ public class TapDoan {
     
     //sai treeset chi lay lay linh vuc khong bi trung lap, tra ve mot set cac linh vuc
     public TreeSet<String> getSetLinhVuc() {
-        TreeSet<String> dsLinhVuc = new TreeSet<String>();
-        refresh();
-        
-        while(dsCongTy.hasNext()) {
-        	CongTy ct = dsCongTy.next();
-        	
-        	if(ct.getLinhVuc() != null) {
-        		dsLinhVuc.add(ct.getLinhVuc());
-        	}
+    	TreeSet<String> dsLinhVuc = new TreeSet<>();
+
+        ArrayList<CongTy> ds = layDanhSachCongTy();
+
+        for (CongTy ct : ds) {
+            if (ct != null) {
+                String linhVuc = ct.getLinhVuc();
+
+                if (linhVuc != null && !linhVuc.trim().isEmpty()) {
+                    dsLinhVuc.add(linhVuc.trim());
+                }
+            }
         }
+
         return dsLinhVuc;
     }
 
@@ -135,6 +153,8 @@ public class TapDoan {
         if(ct == null || ct.getMaST() == null) {
         	return false;
         }
+        
+        refresh();
         if(timCongTy(ct.getMaST()) != null) {
         	return false;
         }
@@ -153,11 +173,12 @@ public class TapDoan {
         if(maST == null) {
         	return false;
         }
+        
         refresh();
         while(dsCongTy.hasNext()) {
         	CongTy ct = dsCongTy.next();
         	
-        	if(maST.equals(ct.getMaST())) {
+        	if(ct != null && maST.equals(ct.getMaST())) {
         		dsCongTy.remove();
         		return true;
         	}
@@ -172,19 +193,18 @@ public class TapDoan {
     
     // tim kiem cong ty bang ma so thue cong ty
     public CongTy timCongTy(String maST) {
-        if(maST == null) {
-        	return null;
+    	if (maST == null || maST.trim().isEmpty()) {
+            return null;
         }
-        
-        refresh();
-        
-        while(dsCongTy.hasNext()) {
-        	CongTy ct = dsCongTy.next();
-        	
-        	if(maST.equals(ct.getMaST())) {
-        		return ct;
-        	}
+
+        ArrayList<CongTy> ds = layDanhSachCongTy();
+
+        for (CongTy ct : ds) {
+            if (ct != null && maST.trim().equals(ct.getMaST())) {
+                return ct;
+            }
         }
+
         return null;
     }
 
@@ -194,14 +214,7 @@ public class TapDoan {
     
     //dem so luong cong ty hien co
     public int demSoCongTy() {
-        int cnt = 0;
-        refresh();
-        
-        while(dsCongTy.hasNext()) {
-        	dsCongTy.next();
-        	cnt++;
-        }
-        return cnt;
+        return layDanhSachCongTy().size();
     }
 
     /**
@@ -245,6 +258,9 @@ public class TapDoan {
        Collections.sort(dsTmp, new Comparator<CongTy>() {
 			@Override
 			public int compare(CongTy o1, CongTy o2) {
+				if(o1.getTenCT() == null) {
+					return -1;
+				}
 				return o1.getTenCT().compareToIgnoreCase(o2.getTenCT());
 			}
        });
@@ -313,6 +329,7 @@ public class TapDoan {
     public ArrayList<CongTy> locCongTyTheoLinhVuc(String linhVuc) {
     	ArrayList<CongTy> res = new ArrayList<>();
     	
+    	linhVuc = linhVuc.trim();
     	if(linhVuc == null) {
     		return res;
     	}
@@ -320,6 +337,9 @@ public class TapDoan {
     	ArrayList<CongTy> ds = layDanhSachCongTy();
     	
     	for(CongTy ct : ds) {
+    		if(ct == null) {
+    			continue;
+    		}
     		String lv = ct.getLinhVuc();
     		
     		if(lv != null && lv.equalsIgnoreCase(linhVuc)) {
@@ -403,7 +423,10 @@ public class TapDoan {
     	ArrayList<CongTy> ds = layDanhSachCongTy();
     	
     	for(CongTy ct : ds) {
-    		cnt += ct.demTongViTriTuyenDung();
+    		if(ct != null) {
+    			cnt += ct.demTongViTriTuyenDung();
+    		}
+    		
     	}
     	
     	return cnt;
@@ -417,7 +440,10 @@ public class TapDoan {
     	ArrayList<CongTy> ds = layDanhSachCongTy();
     	
     	for(CongTy ct : ds) {
-    		cnt += ct.demTongChiTieuDangTuyen();
+    		if(ct != null) {
+    			cnt += ct.demTongChiTieuDangTuyen();
+    		}
+    		
     	}
     	
     	return cnt;
