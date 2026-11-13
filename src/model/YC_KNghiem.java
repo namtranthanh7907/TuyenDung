@@ -51,8 +51,7 @@ public class YC_KNghiem extends AYeuCauTuyenDung {
      * @return
      */
     public boolean kiemTra(HoSoUngVien hs) {
-        // TODO implement here
-        return false;
+        return hs != null && hs.laySoNamKinhNghiemTongHop(linhVucYeuCau) >= soNamToiThieu;
     }
 
     /**
@@ -60,8 +59,14 @@ public class YC_KNghiem extends AYeuCauTuyenDung {
      * @return
      */
     public double chamDiemUngVien(HoSoUngVien hs) {
-        // TODO implement here
-        return 0.0d;
+        if(hs == null) {
+        	return 0.0;
+        }
+        if(soNamToiThieu <= 0) {
+        	return 1.0;
+        }
+        
+        return Math.min(1.0, (double) hs.laySoNamKinhNghiemTongHop(linhVucYeuCau) / soNamToiThieu);
     }
 
 }

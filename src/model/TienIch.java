@@ -14,6 +14,7 @@ public final class TienIch {
 																.withResolverStyle(ResolverStyle.STRICT);
 	
 	private static final Pattern KHOANG_TRANG = Pattern.compile("\\s+");
+	private static final Pattern DAU = Pattern.compile("\\p{M}+");
 	
 	public static LocalDate parseNgay(String ngay) {
 		if(ngay == null || ngay.trim().isEmpty()) {
@@ -39,7 +40,7 @@ public final class TienIch {
 		
 		tmp = tmp.replace('đ', 'd');
 		tmp = Normalizer.normalize(tmp, Form.NFD);
-		tmp = tmp.replaceAll("\\p{M}+", "");
+		tmp = DAU.matcher(tmp).replaceAll("");
 		tmp = KHOANG_TRANG.matcher(tmp).replaceAll(" ").trim();
 		return tmp;
 	}

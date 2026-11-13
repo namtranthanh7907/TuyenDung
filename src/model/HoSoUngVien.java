@@ -332,22 +332,9 @@ public class HoSoUngVien {
      *
      */
 	
-	public LocalDate chuyenNgay(String ngay) {
-    	if(ngay == null || ngay.trim().isEmpty()) {
-    		return null;
-    	}
-    	
-    	try {
-    		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d/M/uuuu")
-    												.withResolverStyle(ResolverStyle.STRICT);
-    		return LocalDate.parse(ngay.trim(), dtf);
-    	} catch(DateTimeParseException e) {
-    		return null;
-    	}
-    }
 	
     public int tinhTuoi() {
-    	LocalDate sinh = chuyenNgay(ngaySinh);
+    	LocalDate sinh = TienIch.parseNgay(ngaySinh);
     	if(sinh == null || sinh.isAfter(LocalDate.now())) {
     		return -1;
     	}
@@ -360,10 +347,6 @@ public class HoSoUngVien {
      * @param soNam 
      * @return
      */
-    
-    public boolean kiemTraGiongNhau(String a, String b) {
-    	return a != null && b != null && !a.trim().isEmpty() && a.trim().equalsIgnoreCase(b.trim());
-    }
     
     
 
@@ -471,7 +454,7 @@ public class HoSoUngVien {
      * @return
      */
     public QuaTrinhLamViec layQuaTrinhLamViec() {
-        if(quaTrinhLamViec.isEmpty() || quaTrinhLamViec == null) {
+        if(quaTrinhLamViec == null || quaTrinhLamViec.isEmpty()) {
         	return null;
         }
         
@@ -483,7 +466,7 @@ public class HoSoUngVien {
      * @return
      */
     public boolean kiemTraYeuCau(AYeuCauTuyenDung yc) {
-        return yc != null || yc.kiemTra(this);
+        return yc != null && yc.kiemTra(this);
     }
 
     /**
@@ -550,11 +533,9 @@ public class HoSoUngVien {
         }
         sb.append("trong lĩnh vực ").append(linhVuc).append(". Chức vụ: ");
         String dau = "";
-        for(QuaTrinhLamViec qt : quaTrinhLamViec) {
-            if(qt != null && ThongKeKinhNghiem.cungLinhVuc(qt, linhVuc)) {
-                sb.append(dau).append(qt.getViTri());
-                dau = ", ";
-            }
+        for(QuaTrinhLamViec qt : ThongKeKinhNghiem.layQuaTrinhTheoLinhVuc(this, linhVuc)) {
+            sb.append(dau).append(qt.getViTri());
+            dau = ", ";
         }
         return sb.toString();
     }
@@ -599,7 +580,23 @@ public class HoSoUngVien {
     }
     
     public static void main(String[] args) {
-		
-	}
+        HoSoUngVien a = new HoSoUngVien("HS01", "Trần Thành Nam", "7/9/1995", "Hà Nội", "Nam",
+                "Đại học", "nam@gmail.com", "0987654321", "Cử nhân", "Marketing", 1.75, 68.0);
+
+        a.themQuaTrinhLamViec(new QuaTrinhLamViec("1/1/2020", "31/12/2021", "Nhân viên MKT", "ABC", "0900000000", "", "", "Marketing"));
+        a.themQuaTrinhLamViec(new QuaTrinhLamViec("1/1/2022", "1/7/2023", "Trưởng nhóm MKT", "ABC", "0900000000", "", "", "Marketing"));
+        a.themQuaTrinhLamViec(new QuaTrinhLamViec("1/1/2023", "31/12/2023", "Lập trình viên", "XYZ", "0900000000", "", "", "IT"));
+        a.themNgoaiNgu("Tiếng Anh", "B2");
+
+        System.out.println(a.tomTatKinhNghiem("marketing"));
+        System.out.println("Số tháng Marketing: " + a.tinhSoThangLamViec("Marketing"));
+        System.out.println("Số năm tổng hợp: " + a.laySoNamKinhNghiemTongHop("Marketing"));
+        System.out.println("Các lĩnh vực: " + a.tomTatLinhVuc());
+        System.out.println("Công việc gần nhất: " + a.layQuaTrinhLamViec());
+        System.out.println("Tổng tháng mọi lĩnh vực: " + ThongKeKinhNghiem.tinhTongSoThang(a));
+        System.out.println("Đạt yêu cầu 3 năm Marketing: " + a.kiemTraYeuCau(new YC_KNghiem("Marketing", 3)));
+        System.out.println("Đạt yêu cầu tiếng Anh C1: " + a.kiemTraYeuCau(new YC_NgoaiNgu("Tiếng Anh", "C1")));
+        System.out.println("Đạt yêu cầu null: " + a.kiemTraYeuCau(null));
+    }
 
 }

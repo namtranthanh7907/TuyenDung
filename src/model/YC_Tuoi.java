@@ -51,8 +51,12 @@ public class YC_Tuoi extends AYeuCauTuyenDung {
      * @return
      */
     public boolean kiemTra(HoSoUngVien hs) {
-        // TODO implement here
-        return false;
+        if(hs == null){
+        	return false;
+        }
+        
+        int tuoi = hs.tinhTuoi();
+        return tuoi >= 0 && tuoi >= minTuoi && tuoi <= maxTuoi;
     }
 
     /**
@@ -60,8 +64,7 @@ public class YC_Tuoi extends AYeuCauTuyenDung {
      * @return
      */
     public double chamDiemUngVien(HoSoUngVien hs) {
-        // TODO implement here
-        return 0.0d;
+    	return kiemTra(hs) ? 3.0 : 0;
     }
 
 }

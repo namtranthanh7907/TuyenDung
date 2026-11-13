@@ -11,30 +11,6 @@ import java.util.Stack;
 
 public final class ThongKeKinhNghiem {
 	
-	private static class NhomLinhVuc {
-		private final String tenHienThi;
-		private final ArrayList<QuaTrinhLamViec> ds;
-		
-		private NhomLinhVuc(String tenHienThi) {
-			super();
-			this.tenHienThi = tenHienThi;
-			this.ds = new ArrayList<QuaTrinhLamViec>();;
-		}
-		
-	}
-	private static class KetQuaThongKe {
-		private final String tenLinhVuc;
-		private final int soThang;
-			
-		private KetQuaThongKe(String tenLinhVuc, int soThang) {
-			super();
-			this.tenLinhVuc = tenLinhVuc;
-			this.soThang = soThang;
-			
-			
-		}
-	}
-	
 	private static String anToan(String s) {
 		return s == null ? "" : s.trim();
 	}
@@ -49,9 +25,7 @@ public final class ThongKeKinhNghiem {
 	
 	private static boolean duLieuCongViecHopLe(QuaTrinhLamViec qt) {
 		return qt != null && qt.hopLe()
-				&& !TienIch.chuanHoa(qt.getLinhVuc()).isEmpty()
-				&& !TienIch.chuanHoa(qt.getViTri()).isEmpty()
-				&& !TienIch.chuanHoa(qt.getTenCongTy()).isEmpty();
+				&& !TienIch.chuanHoa(qt.getLinhVuc()).isEmpty();
 	}
 	
 	private static Comparator<QuaTrinhLamViec> soSanhNgayBatDau() {
@@ -87,22 +61,6 @@ public final class ThongKeKinhNghiem {
 		return res;
 	}
 	
-	private static int demMucSaiTheoLinhVuc(HoSoUngVien hs, String linhVuc) {
-		int cnt = 0;
-		Stack<QuaTrinhLamViec> ds = layDSQuaTrinhLamViec(hs);
-		
-		if(ds == null || linhVuc == null || linhVuc.trim().isEmpty()) {
-			return 0;
-		}
-		
-		for(QuaTrinhLamViec qt :ds) {
-			if(cungLinhVuc(qt, linhVuc) && !duLieuCongViecHopLe(qt)) {
-				cnt++;
-			}
-		}
-		
-		return cnt;
-	}
 	
 	private static int tinhKhoangCacNgay(ArrayList<QuaTrinhLamViec> ds) {
 		if(ds == null || ds.isEmpty()) {

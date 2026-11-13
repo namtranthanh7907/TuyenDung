@@ -179,7 +179,9 @@ public class QuaTrinhLamViec {
         }
         String ketThuc = TienIch.chuanHoa(tgKetThuc);
         
-        return "nay".equals(ketThuc);
+        return "nay".equals(ketThuc)
+        		|| "hien tai".equals(ketThuc)
+        		|| "present".equals(ketThuc);
     }
     
     public boolean hopLe() {

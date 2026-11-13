@@ -79,8 +79,15 @@ public class YC_NgoaiHinh extends AYeuCauTuyenDung {
      * @return
      */
     public boolean kiemTra(HoSoUngVien hs) {
-        // TODO implement here
-        return false;
+        if(hs == null) {
+        	return false;
+        }
+        
+        double cao = hs.getChieuCao();
+        double canNang = hs.getCanNang();
+        return cao > 0 && canNang > 0
+        		&& cao > chieuCaoMin && cao <= chieuCaoMax
+        		&& canNang >= canNangMin && canNang <= canNangMax;
     }
 
     /**
@@ -88,8 +95,7 @@ public class YC_NgoaiHinh extends AYeuCauTuyenDung {
      * @return
      */
     public double chamDiemUngVien(HoSoUngVien hs) {
-        // TODO implement here
-        return 0.0d;
+        return kiemTra(hs) ? 1.0 : 0.0;
     }
 
 }

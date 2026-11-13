@@ -57,8 +57,7 @@ public class YC_BangCap extends AYeuCauTuyenDung {
      * @return
      */
     public boolean kiemTra(HoSoUngVien hs) {
-        // TODO implement here
-        return false;
+    	return hs != null && TienIch.khop(hs.getBangCap(), tenBangCap);
     }
 
     /**
@@ -66,8 +65,7 @@ public class YC_BangCap extends AYeuCauTuyenDung {
      * @return
      */
     public double chamDiemUngVien(HoSoUngVien hs) {
-        // TODO implement here
-        return 0.0d;
+        return kiemTra(hs) ? 1.0 : 0.0;
     }
 
 }
