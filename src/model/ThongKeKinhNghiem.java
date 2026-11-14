@@ -11,23 +11,26 @@ import java.util.Stack;
 
 public final class ThongKeKinhNghiem {
 	
-	private static String anToan(String s) {
-		return s == null ? "" : s.trim();
-	}
-	
+	//Lấy danh sách quá trình làm việc của một hồ sơ ứng viên
 	private static Stack<QuaTrinhLamViec> layDSQuaTrinhLamViec(HoSoUngVien hs) {
 		return hs == null ? null : hs.getQuaTrinhLamViec();
 	}
 	
+	
+	//Kiểm tra một quá trình làm việc có thuộc lĩnh vực đang tìm kiếm không
 	public static boolean cungLinhVuc(QuaTrinhLamViec qt, String linhVuc) {
 		return qt != null && TienIch.khop(qt.getLinhVuc(), linhVuc);
 	}
 	
+	
+	//Kiểm tra đối tượng quá trình làm việc có hợp lệ hay không
 	private static boolean duLieuCongViecHopLe(QuaTrinhLamViec qt) {
 		return qt != null && qt.hopLe()
 				&& !TienIch.chuanHoa(qt.getLinhVuc()).isEmpty();
 	}
 	
+	
+	//sắp xếp quá trình làm việc theo ngày bắt đầu 
 	private static Comparator<QuaTrinhLamViec> soSanhNgayBatDau() {
 		return new Comparator<QuaTrinhLamViec>() {
 			
@@ -38,6 +41,8 @@ public final class ThongKeKinhNghiem {
 		};
 	}
 	
+	
+	//Lọc các quá trình làm việc của ứng viên theo một lĩnh vực
 	public static ArrayList<QuaTrinhLamViec> layQuaTrinhTheoLinhVuc(HoSoUngVien hs, String linhVuc) {
 		ArrayList<QuaTrinhLamViec> res = new ArrayList<QuaTrinhLamViec>();
 		if(hs == null || linhVuc == null || linhVuc.trim().isEmpty()) {
@@ -61,7 +66,7 @@ public final class ThongKeKinhNghiem {
 		return res;
 	}
 	
-	
+	//Tính tổng số tháng làm việc trong một danh sách quá trình
 	private static int tinhKhoangCacNgay(ArrayList<QuaTrinhLamViec> ds) {
 		if(ds == null || ds.isEmpty()) {
 			return 0;
@@ -85,7 +90,7 @@ public final class ThongKeKinhNghiem {
 			if(ketThuc == null) {
 				batDau = bd;
 				ketThuc = kt;
-			} else if(!bd.isAfter(kt.plusDays(1))) {
+			} else if(!bd.isAfter(ketThuc.plusDays(1))) {
 				if(kt.isAfter(ketThuc)) {
 					ketThuc = kt;
 				}
@@ -103,10 +108,14 @@ public final class ThongKeKinhNghiem {
 		return tong > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) Math.max(0, tong);
 	}
 	
+	
+	//tổng số tháng làm việc trong lĩnh vực
 	public static int tinhSoThang(HoSoUngVien hs, String linhVuc) {
 		return tinhKhoangCacNgay(layQuaTrinhTheoLinhVuc(hs, linhVuc));
 	}
 	
+	
+	//tính tổng số tháng của một ứng viên
 	public static int tinhTongSoThang(HoSoUngVien hs) {
 		ArrayList<QuaTrinhLamViec> dsHopLe = new ArrayList<QuaTrinhLamViec>();
 		Stack<QuaTrinhLamViec> ds = layDSQuaTrinhLamViec(hs);

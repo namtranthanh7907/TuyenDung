@@ -484,11 +484,34 @@ public class CongTy {
                 "HS01", "Trần Thành Nam", "7/9/2007", "Hà Nội", "Nam",
                 "Đại học", "nam.tran@gmail.com", "0987654321", "Cử nhân",
                 "Công nghệ thông tin", 1.75, 68.0);
+    	
+    	hs1.themKinhNghiem("Marketing", 2);
+
+        hs1.themQuaTrinhLamViec(new QuaTrinhLamViec(
+                "1/1/2020", "31/12/2021", "Nhân viên MKT",
+                "ABC", "0900000000", "", "", "Marketing"));
+
+        hs1.themQuaTrinhLamViec(new QuaTrinhLamViec(
+                "1/1/2022", "1/7/2023", "Trưởng nhóm MKT",
+                "ABC", "0900000000", "", "", "Marketing"));
+
+        hs1.themQuaTrinhLamViec(new QuaTrinhLamViec(
+                "1/1/2023", "31/12/2023", "Lập trình viên",
+                "XYZ", "0900000000", "", "", "IT"));
+
+        hs1.themNgoaiNgu("Tiếng Anh", "B2");
 
     	HoSoUngVien hs2 = new HoSoUngVien(
                 "HS02", "Trương Tùng Dương", "20/05/2003", "TP.HCM", "Gay",
                 "Đại học", "anv@gmail.com", "0912345678", "Kỹ sư",
                 "Kỹ thuật phần mềm", 1.70, 65.0);
+    	
+    	hs2.themNgoaiNgu("Tiếng Anh", "B2");
+
+        hs2.themQuaTrinhLamViec(new QuaTrinhLamViec(
+                "1/1/2023", "31/12/2023", "Java Developer",
+                "Dương Tech", "0363636363", "", "",
+                "Công nghệ thông tin"));
     	
     	HoSoUngVien hs3 = new HoSoUngVien(
                 "HS_BDS01", "Phạm Văn Bình", "12/08/1998", "Hà Nội", "Nam",

@@ -12,6 +12,9 @@ import java.util.*;
  * 
  */
 public class QuaTrinhLamViec {
+	
+	private static final DateTimeFormatter FORMAT_NGAY = DateTimeFormatter.ofPattern("d/M/uuuu")
+			.withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * Default constructor
@@ -155,10 +158,14 @@ public class QuaTrinhLamViec {
 		this.thanhTich = thanhTich;
 	}
 	
+	
+	//Gọi TienIch.parseNgay() để chuyển chuỗi ngày thành LocalDate
 	public LocalDate layNgayBatDau() {
 		return TienIch.parseNgay(tgianBD);
 	}
 	
+	
+	//Kiểm tra trạng thái làm việc thông qua tinhTrangLamViec() và chuyển chuỗi thành LocalDate
 	public LocalDate layNgayKetThuc() {
 		if(tinhTrangLamViec()) {
 			return LocalDate.now();
@@ -173,6 +180,8 @@ public class QuaTrinhLamViec {
     /**
      * @return
      */
+	
+	//Xác định ứng viên còn đang làm việc hay không.
     public boolean tinhTrangLamViec() {
     	if (tgKetThuc == null || tgKetThuc.trim().isEmpty()) {
             return true;
@@ -184,6 +193,9 @@ public class QuaTrinhLamViec {
         		|| "present".equals(ketThuc);
     }
     
+    
+    
+    //Kiểm tra tính hợp lệ của khoảng thời gian làm việc.
     public boolean hopLe() {
     	LocalDate batDau = layNgayBatDau();
     	LocalDate ketThuc = layNgayKetThuc();
@@ -191,6 +203,8 @@ public class QuaTrinhLamViec {
     	return batDau != null && ketThuc != null && !ketThuc.isBefore(batDau);
     }
 
+    
+    //Tính số tháng làm việc của một quá trình
     public int tinhSoThangLamViec() {
     	if(!hopLe()) {
     		return 0;
@@ -213,7 +227,7 @@ public class QuaTrinhLamViec {
      */
     
     
-    
+    //Cập nhật chức vụ của ứng viên trong quá trình làm việc
     public void capNhatQuaTrinhLamViec(String vitriMoi) {
         if(vitriMoi == null || vitriMoi.trim().isEmpty()) {
         	return;
@@ -225,4 +239,120 @@ public class QuaTrinhLamViec {
     	return viTri + " tai " + tenCongTy + " (" + tgianBD + " - " + (tinhTrangLamViec() ? "nay" : tgKetThuc)
     			+ "), linh vuc: " + linhVuc;
     }
+    
+    public static void main(String[] args) {
+    	QuaTrinhLamViec qt1 = new QuaTrinhLamViec(
+                "1/1/2020", "31/12/2021",
+                "Nhân viên MKT", "ABC",
+                "0900000000", "Nghiên cứu thị trường",
+                "Hoàn thành dự án", "Marketing");
+
+        QuaTrinhLamViec qt2 = new QuaTrinhLamViec(
+                "1/1/2022", "Nay",
+                "Trưởng nhóm MKT", "ABC",
+                "0900000000", "Quản lý nhóm",
+                "Đạt KPI", "Marketing");
+        
+        
+        System.out.println("Qua trinh 1: " + qt1);
+        System.out.println("Qua trinh 2: " + qt2);
+        
+        
+        System.out.println("\n-----  CHUYEN DOI NGAY -----");
+
+        System.out.println("Ngay bat dau qt1: "
+                + qt1.layNgayBatDau().format(FORMAT_NGAY));
+
+        System.out.println("Ngay ket thuc qt1: "
+                + qt1.layNgayKetThuc().format(FORMAT_NGAY));
+
+        System.out.println("Ngay bat dau qt2: "
+                + qt2.layNgayBatDau().format(FORMAT_NGAY));
+
+        System.out.println("Ngay ket thuc qt2: "
+                + qt2.layNgayKetThuc().format(FORMAT_NGAY));
+
+        QuaTrinhLamViec ngaySai = new QuaTrinhLamViec(
+                "31/2/2023", "1/3/2023",
+                "Tester", "ABC", "0900000000",
+                "", "", "IT");
+
+        System.out.println("Ngay khong hop le: "
+                + ngaySai.layNgayBatDau());
+        
+        
+        
+        
+        
+        System.out.println("\n-----  TINH TRANG LAM VIEC -----");
+
+        System.out.println("Qt1 da ket thuc: "
+                + !qt1.tinhTrangLamViec());
+
+        System.out.println("Qt2 dang lam viec: "
+                + qt2.tinhTrangLamViec());
+
+        QuaTrinhLamViec qtHienTai = new QuaTrinhLamViec(
+                "1/1/2024", "Hiện tại",
+                "Developer", "ABC",
+                "0900000000", "", "", "IT");
+
+        QuaTrinhLamViec qtPresent = new QuaTrinhLamViec(
+                "1/1/2024", "Present",
+                "Developer", "ABC",
+                "0900000000", "", "", "IT");
+
+        QuaTrinhLamViec qtRong = new QuaTrinhLamViec(
+                "1/1/2024", "",
+                "Developer", "ABC",
+                "0900000000", "", "", "IT");
+
+        System.out.println("Dang lam viec voi Hien tai: "
+                + qtHienTai.tinhTrangLamViec());
+
+        System.out.println("Dang lam viec voi Present: "
+                + qtPresent.tinhTrangLamViec());
+
+        System.out.println("Dang lam viec voi ngay ket thuc rong: "
+                + qtRong.tinhTrangLamViec());
+        
+        
+        
+        System.out.println("\n-----  HOP LE -----");
+
+        System.out.println("Qt1 hop le: " + qt1.hopLe());
+        System.out.println("Qt2 hop le: " + qt2.hopLe());
+        System.out.println("Qt sai ngay bat dau: " + ngaySai.hopLe());
+
+        QuaTrinhLamViec ngayNguoc = new QuaTrinhLamViec(
+                "1/5/2023", "1/4/2023",
+                "Tester", "ABC",
+                "0900000000", "", "", "IT");
+
+        System.out.println("Ngay ket thuc truoc ngay bat dau: "
+                + ngayNguoc.hopLe());
+        
+        
+        
+        
+        
+        System.out.println("\n-----  TINH SO THANG LAM VIEC -----");
+
+        System.out.println("So thang qt1: "
+                + qt1.tinhSoThangLamViec());
+
+        System.out.println("So thang qt2: "
+                + qt2.tinhSoThangLamViec());
+
+        System.out.println("So thang ngay khong hop le: "
+                + ngaySai.tinhSoThangLamViec());
+
+        System.out.println("So thang ngay ket thuc truoc ngay bat dau: "
+                + ngayNguoc.tinhSoThangLamViec());
+        
+        
+        
+        
+        
+	}
 }

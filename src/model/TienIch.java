@@ -16,6 +16,9 @@ public final class TienIch {
 	private static final Pattern KHOANG_TRANG = Pattern.compile("\\s+");
 	private static final Pattern DAU = Pattern.compile("\\p{M}+");
 	
+	
+	
+	//Chuyển chuỗi ngày thành đối tượng LocalDate
 	public static LocalDate parseNgay(String ngay) {
 		if(ngay == null || ngay.trim().isEmpty()) {
 			return null;
@@ -28,6 +31,8 @@ public final class TienIch {
 		}
 	}
 	
+	
+	//Chuẩn hóa một chuỗi văn bản để phục vụ việc tìm kiếm và so sánh
 	public static String chuanHoa(String chuoi) {
 		if(chuoi == null) {
 			return "";
@@ -45,6 +50,8 @@ public final class TienIch {
 		return tmp;
 	}
 	
+	
+	//Kiểm tra hai chuỗi có giống nhau sau khi chuẩn hóa hay không
 	public static boolean khop(String a, String b) {
 		String x = chuanHoa(a);
 		String y = chuanHoa(b);
