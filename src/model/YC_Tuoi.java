@@ -64,7 +64,7 @@ public class YC_Tuoi extends AYeuCauTuyenDung {
      * @return
      */
     public double chamDiemUngVien(HoSoUngVien hs) {
-    	return kiemTra(hs) ? 3.0 : 0;
+    	return kiemTra(hs) ? 1.0 : 0;
     }
 
 }

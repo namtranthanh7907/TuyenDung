@@ -7,11 +7,21 @@ import java.util.*;
  * 
  */
 public class KetQuaUngTuyen {
+	
+	
+	public static final String TT_CHO = "Cho xet duyet";
+	public static final String TT_DAT_HO_SO = "Dat ho so";
+	public static final String TT_PHONG_VAN = "Dang phong van";
+	public static final String TT_TRUNGTUYEN = "Trung tuyen";
+	public static final String TT_LOAI = "Loai";
 
     /**
      * Default constructor
      */
     public KetQuaUngTuyen() {
+    	this.maKetQua = "";
+    	this.trangThaiUngTuyen = TT_CHO;
+    	this.ngayDanhGia = "";
     }
 
     /**
@@ -43,6 +53,10 @@ public class KetQuaUngTuyen {
      * 
      */
     private double diemTongKet;
+    
+    
+    private double diemHoSo;
+    private double diemPhongVan;
 
 
 
@@ -118,13 +132,39 @@ public class KetQuaUngTuyen {
 		this.diemTongKet = diemTongKet;
 	}
 
+	
+	
+
+	public double getDiemHoSo() {
+		return diemHoSo;
+	}
+
+
+	public void setDiemHoSo(double diemHoSo) {
+		this.diemHoSo = diemHoSo;
+	}
+
+
+	public double getDiemPhongVan() {
+		return diemPhongVan;
+	}
+
+
+	public void setDiemPhongVan(double diemPhongVan) {
+		this.diemPhongVan = diemPhongVan;
+	}
+
 
 	/**
      * @param trangThaiMoi 
      * @return
      */
     public void capNhatTrangThai(String trangThaiMoi) {
-        this.trangThaiUngTuyen = trangThaiMoi;
+        if(trangThaiMoi == null || trangThaiMoi.trim().isEmpty()) {
+        	return;
+        }
+        
+        this.trangThaiUngTuyen = trangThaiMoi.trim();
     }
 
     /**
@@ -133,6 +173,15 @@ public class KetQuaUngTuyen {
      */
     public boolean kiemTraDatDiemSan(double diemSan) {
         return diemTongKet >= diemSan;
+    }
+    
+    public String toString() {
+    	String ten = (hoSo == null || hoSo.getHoTen() == null) ? "" : hoSo.getHoTen();
+    	return (maKetQua == null ? "" : maKetQua) + " | " + ten + " | "
+    			+ (trangThaiUngTuyen == null ? "" : trangThaiUngTuyen)
+    			+ " | HS=" + String.format("%.2f", diemHoSo)
+    			+ " | PV=" + String.format("%.2f", diemPhongVan)
+    			+ " | TK=" + String.format("%.2f", diemTongKet);
     }
 
 }

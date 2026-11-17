@@ -1,17 +1,35 @@
 package model;
 
 import java.io.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 /**
  * 
  */
 public class PhongVan {
+	
+	
+	public static final String TT_CHUA = "Chua phong van";
+	public static final String TT_DA ="Da phong van";
+	public static final String TT_HUY = "Da huy";
+	
+	
+	public static final String KQ_DAT ="Dat";
+	public static final String KQ_KHONG_DAT = "Khong dat";
+	
+	
+	
 
     /**
      * Default constructor
      */
     public PhongVan() {
+    	this.trangThaiPhongVan = TT_CHUA;
+    	this.nhanXet = "";
+    	this.ketQuaVongPhongVan = "";
     }
 
     /**
@@ -67,17 +85,17 @@ public class PhongVan {
     /**
      * 
      */
-    public String nhanXet;
+    private String nhanXet;
 
     /**
      * 
      */
-    public String ketQuaVongPhongVan;
+    private String ketQuaVongPhongVan;
 
 
+    private int vong = 1;
 
-
-
+    
 
 
     public PhongVan(String idPV, HoSoUngVien hoSo, ViTriTuyenDung viTri, String ngayPhongVan, String gioPhongVan,
@@ -92,10 +110,10 @@ public class PhongVan {
 		this.hinhThuc = hinhThuc;
 		this.diaDiem = diaDiem;
 		this.nguoiPhongVan = nguoiPhongVan;
-		this.trangThaiPhongVan = trangThaiPhongVan;
+		this.trangThaiPhongVan = (trangThaiPhongVan == null) ? TT_CHUA : trangThaiPhongVan;
 		this.diemPhongVan = diemPhongVan;
 		this.nhanXet = nhanXet;
-		this.ketQuaVongPhongVan = ketQuaVongPhongVan;
+		this.ketQuaVongPhongVan = (ketQuaVongPhongVan == null) ? "" : ketQuaVongPhongVan;
 	}
 
     
@@ -218,13 +236,41 @@ public class PhongVan {
 		this.ketQuaVongPhongVan = ketQuaVongPhongVan;
 	}
 
+	
+	
+	
 
-	/**
-     * 
-     */
-    public void Operation1() {
-        // TODO implement here
-    }
+	public int getVong() {
+		return vong;
+	}
+	
+	public void setVong(int vong) {
+		if(vong >= 1) {
+			this.vong = vong;
+		}
+	}
+
+	
+	
+	private static LocalTime chuyenGio(String gio) {
+		if(gio == null || gio.trim().isEmpty()) {
+			return null;
+		}
+		try {
+			return LocalTime.parse(gio.trim(),
+				DateTimeFormatter.ofPattern("H:mm"));
+		} catch(DateTimeParseException e) {
+			return null;
+		}
+	}
+	
+	private static String kiemTraNull(String s) {
+		return s == null ? "" : s;
+	}
+	
+	
+	
+	
 
     /**
      * @param ngay 
@@ -232,26 +278,42 @@ public class PhongVan {
      * @return
      */
     public boolean datLich(String ngay, String gio) {
-        // TODO implement here
-        return false;
+        if(TT_DA.equals(trangThaiPhongVan) || TT_HUY.equals(trangThaiPhongVan)) {
+        	return false;
+        }
+        
+        if(TienIch.parseNgay(ngay) == null || chuyenGio(gio) == null) {
+        	return false;
+        }
+        
+        this.ngayPhongVan = ngay.trim();
+        this.gioPhongVan = gio.trim();
+        this.trangThaiPhongVan = TT_CHUA;
+        return true;
     }
 
-    /**
+    
+
+
+	/**
      * @param ngayMoi 
      * @param gioMoi 
      * @return
      */
     public boolean doiLich(String ngayMoi, String gioMoi) {
-        // TODO implement here
-        return false;
+        return datLich(ngayMoi, gioMoi);
     }
 
     /**
      * @return
      */
     public boolean huyPhongVan() {
-        // TODO implement here
-        return false;
+    	if(TT_DA.equals(trangThaiPhongVan) || TT_HUY.equals(trangThaiPhongVan)) {
+        	return false;
+        }
+        
+        this.trangThaiPhongVan = TT_HUY;
+        return true;
     }
 
     /**
@@ -260,7 +322,13 @@ public class PhongVan {
      * @return
      */
     public void chamDiem(double diem, String nhanXet) {
-        // TODO implement here
+        if(Double.isNaN(diem) || diem < 0 || diem > 10 || TT_HUY.equals(trangThaiPhongVan)) {
+        	return;
+        }
+        
+        this.diemPhongVan = diem;
+        this.nhanXet = (nhanXet == null) ? "" : nhanXet;
+        this.trangThaiPhongVan = TT_DA;
     	
     }
 
@@ -269,8 +337,7 @@ public class PhongVan {
      * @return
      */
     public boolean kiemTraDat(double diemChuan) {
-        // TODO implement here
-        return false;
+    	return TT_DA.equals(trangThaiPhongVan) && diemPhongVan >= diemChuan;
     }
 
     /**
@@ -278,7 +345,7 @@ public class PhongVan {
      * @return
      */
     public void capNhatKetQua(String ketQua) {
-        // TODO implement here
+        this.ketQuaVongPhongVan = (ketQua == null) ? "" : ketQua;
         
     }
 
@@ -286,8 +353,19 @@ public class PhongVan {
      * @return
      */
     public String layThongTinPhongVan() {
-        // TODO implement here
-        return "";
+        String ten = (hoSo == null) ? "" : kiemTraNull(hoSo.getHoTen());
+        
+        return kiemTraNull(idPV) + " |  Vong " + vong + " | " + ten
+        		+ " | " + kiemTraNull(ngayPhongVan) + " " + kiemTraNull(gioPhongVan)
+        		+ " | " + kiemTraNull(hinhThuc) + " - " + kiemTraNull(diaDiem)
+        		+ " | Nguoi PV: " + kiemTraNull(nguoiPhongVan)
+        		+ " | " + kiemTraNull(trangThaiPhongVan)
+        		+ " | Diem: " + String.format("%.2f", diemPhongVan)
+        		+ " | KQ: " + kiemTraNull(ketQuaVongPhongVan);
+    }
+    
+    public String toString() {
+    	return layThongTinPhongVan();
     }
 
 }

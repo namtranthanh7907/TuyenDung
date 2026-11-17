@@ -87,7 +87,7 @@ public class ViTriTuyenDung {
 		this.soLuong = soLuong;
 		this.maxLuong = maxLuong;
 		this.minLuong = minLuong;
-		this.dsHoSoUngVien = dsHoSoUngVien;
+		this.dsHoSoUngVien = (dsHoSoUngVien == null) ? new HashSet<>() : dsHoSoUngVien;
 		this.dsYeuCauTuyenDung = new PriorityQueue<>(new Comparator<AYeuCauTuyenDung>() {
 		    @Override
 		    public int compare(AYeuCauTuyenDung o1, AYeuCauTuyenDung o2) {
@@ -100,8 +100,8 @@ public class ViTriTuyenDung {
 		
 		this.maViTri = maViTri;
 		this.moTaCongViec = moTaCongViec;
-		this.dsKetQua = dsKetQua;
-		this.dsPhongVan = dsPhongVan;
+		this.dsKetQua = (dsKetQua == null) ? new ArrayList<>() : dsKetQua;
+		this.dsPhongVan = (dsPhongVan == null) ? new ArrayList<>() : dsPhongVan;
 	}
     
     
@@ -275,9 +275,6 @@ public class ViTriTuyenDung {
         	return false;
         }
         
-        if(!kiemTraConChiTieu()) {
-        	return false;
-        }
         
         if(timHoSo(hs.getMaHS()) != null) {
         	return false;
@@ -365,7 +362,7 @@ public class ViTriTuyenDung {
      * @return
      */
     public boolean kiemTraConChiTieu() {
-    	return dsHoSoUngVien.size() < soLuong;
+    	return demSoTrungTuyen() < soLuong;
     }
 
     /**
