@@ -1,6 +1,8 @@
 package model;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -442,6 +444,262 @@ public class ViTriTuyenDung {
         return new ArrayList<>(dsPhongVan);
     }
 
+    
+    
+    private String homNay() {
+    	return LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+    
+    private String taoMaKetQua(HoSoUngVien hs) {
+    	return (maViTri == null ? "" : maViTri) + "-" + hs.getMaHS();
+    }
+    
+    private String taoMaPhongVan(int vong, HoSoUngVien hs) {
+    	return (maViTri == null ? "" : maViTri) + " -V" + vong + "-" + hs.getMaHS();
+    }
+    
+    public double tinhDiemHoSo(HoSoUngVien hs) {
+    	if(hs == null || dsHoSoUngVien == null) {
+    		return 0;
+    	}
+    	
+    	int tongUuTien = 0;
+    	
+    	for(AYeuCauTuyenDung yc : dsYeuCauTuyenDung) {
+    		if(yc != null) {
+    			tongUuTien += yc.getDoUuTien();
+    		}
+    	}
+    	
+    	if(tongUuTien <= 0) {
+    		return 10.0;
+    	}
+    	
+    	double diem = tinhTongDiem(hs) / tongUuTien * 10;
+    	
+    	return Math.max(0, Math.min(10, diem));
+    }
+    
+    public KetQuaUngTuyen timKetQua(String maHS) {
+    	if(maHS == null || dsKetQua == null) {
+    		return null;
+    	}
+    	
+    	for(KetQuaUngTuyen kq : dsKetQua) {
+    		if(kq != null && kq.getHoSo() != null && maHS.equals(kq.getHoSo().getMaHS())) {
+    			return kq;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    
+    private KetQuaUngTuyen layHoacTaoKetQua(HoSoUngVien hs) {
+    	KetQuaUngTuyen kq = timKetQua(hs.getMaHS());
+    	
+    	if(kq == null) {
+    		kq = new KetQuaUngTuyen(taoMaKetQua(hs), hs, KetQuaUngTuyen.TT_CHO, homNay(), this, 0);
+    		
+    		dsKetQua.add(kq);
+    	}
+    	return kq;
+    }
+    
+    private boolean coPhongVan(HoSoUngVien hs) {
+    	for(PhongVan pv : dsPhongVan) {
+    		if(pv != null && hs.equals(pv.getHoSo())) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
+    
+    public ArrayList<KetQuaUngTuyen> xetDuyetHoSo() {
+    	ArrayList<KetQuaUngTuyen> res = new ArrayList<>();
+    	
+    	for(HoSoUngVien hs : dsHoSoUngVien) {
+    		if(hs == null) {
+    			continue;
+    		}
+    		
+    		KetQuaUngTuyen kq = layHoacTaoKetQua(hs);
+    		boolean dat = kiemTraYeuCau(hs);
+    		double diem = tinhDiemHoSo(hs);
+    		kq.setDiemHoSo(diem);
+    		
+    		if(!coPhongVan(hs)) {
+    			kq.setDiemHoSo(diem);
+    			kq.setNgayDanhGia(homNay());
+    			kq.capNhatTrangThai(dat ? KetQuaUngTuyen.TT_DAT_HO_SO : KetQuaUngTuyen.TT_LOAI);
+    		}
+    		
+    		if(dat) {
+    			res.add(kq);
+    		}
+    	}
+    	return res;
+    }
+    
+    public int demSoTrungTuyen() {
+    	int cnt = 0;
+    	
+    	if(dsKetQua == null) {
+    		return 0;
+    	}
+    	
+    	for(KetQuaUngTuyen kq : dsKetQua) {
+    		if(kq != null && KetQuaUngTuyen.TT_TRUNGTUYEN.equals(kq.getTrangThaiUngTuyen())) {
+    			cnt++;
+    		}
+    	}
+    	
+    	return cnt;
+    }
+    
+    
+    private boolean daDatVong(HoSoUngVien hs, int vong) {
+    	PhongVan pv = timPhongVan(taoMaPhongVan(vong, hs));
+    	
+    	return pv != null && PhongVan.KQ_DAT.equals(pv.getKetQuaVongPhongVan());
+    }
+    
+    public int taoLichPhongVan(int vong, String ngay, String gio, String hinhThuc, String diaDiem,
+    		String nguoiPV, ArrayList<HoSoUngVien> dsUngVien) {
+    	if(vong < 1 || dsUngVien == null) {
+    		return 0;
+    	}
+    	
+    	int cnt = 0;
+    	
+    	for(HoSoUngVien hs : dsUngVien) {
+    		if(hs == null || timHoSo(hs.getMaHS()) == null) {
+    			continue;
+    		}
+    		
+    		KetQuaUngTuyen kq = layHoacTaoKetQua(hs);
+    		String trangThai = kq.getTrangThaiUngTuyen();
+    		
+    		if(KetQuaUngTuyen.TT_LOAI.equals(trangThai) || KetQuaUngTuyen.TT_TRUNGTUYEN.equals(trangThai)) {
+    			continue;
+    		}
+    		
+    		if(vong > 1 && !daDatVong(hs, vong - 1)) {
+    			continue;
+    		}
+    		
+    		PhongVan pv = new PhongVan(taoMaPhongVan(vong, hs), hs, this, "", "",
+    				hinhThuc, diaDiem, nguoiPV, PhongVan.TT_CHUA, 0, "", "");
+    		
+    		pv.setVong(vong);
+    		
+    		if(!pv.datLich(ngay, gio)) {
+    			continue;
+    		}
+    		
+    		if(themPhongVan(pv)) {
+    			kq.capNhatTrangThai(KetQuaUngTuyen.TT_PHONG_VAN);
+    			cnt++;
+    		}
+    	}
+    	return cnt;
+    }
+    
+    public ArrayList<PhongVan> layPhongVanTheoVong(int vong) {
+    	ArrayList<PhongVan> res = new ArrayList<>();
+    	
+    	for(PhongVan pv : dsPhongVan) {
+    		if(pv != null && pv.getVong() == vong) {
+    			res.add(pv);
+    		}
+    	}
+    	return res;
+    }
+    
+    public ArrayList<HoSoUngVien> layDanhSachUngVienPhongVan(int vong) {
+    	ArrayList<HoSoUngVien> res = new ArrayList<>();
+    	
+    	for(PhongVan pv : layPhongVanTheoVong(vong)) {
+    		if(pv.getHoSo() != null || !PhongVan.TT_HUY.equals(pv.getTrangThaiPhongVan())) {
+    			res.add(pv.getHoSo());
+    		}
+    	}
+    	return res;
+    }
+    
+    public boolean chamDiemPhongVan(String maPV, double diem, String nhanXet) {
+    	PhongVan pv = timPhongVan(maPV);
+    	
+    	if(pv == null || Double.isNaN(diem) || diem < 0 || diem > 10) {
+    		return false;
+    	}
+    	
+    	if(PhongVan.TT_HUY.equals(pv.getTrangThaiPhongVan())) {
+    		return false;
+    	}
+    	
+    	String ketQua = pv.getKetQuaVongPhongVan();
+    	if(ketQua != null && !ketQua.trim().isEmpty()) {
+    		return false;
+    	}
+    	
+    	pv.chamDiem(diem, nhanXet);
+    	return true;
+    }
+    
+    public ArrayList<HoSoUngVien> chotKetQuaVong(int vong, double diemChuan) {
+    	ArrayList<HoSoUngVien> dsDat = new ArrayList<>();
+    	
+    	for(PhongVan pv : dsPhongVan) {
+    		if(pv.getHoSo() == null || !PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan())) {
+    			continue;
+    		}
+    		
+    		String ketQua = pv.getKetQuaVongPhongVan();
+    		
+    		if(ketQua == null || ketQua.isEmpty()) {
+    			if(pv.kiemTraDat(diemChuan)) {
+    				pv.capNhatKetQua(PhongVan.KQ_DAT);
+    			} else {
+    				pv.capNhatKetQua(PhongVan.KQ_KHONG_DAT);
+    				
+    				KetQuaUngTuyen kq = timKetQua(pv.getHoSo().getMaHS());
+    				if(kq != null) {
+    					kq.capNhatTrangThai(KetQuaUngTuyen.TT_LOAI);
+    				}
+    			}
+    		}
+    		
+    		
+    		
+    		if(PhongVan.KQ_DAT.equals(pv.getKetQuaVongPhongVan())) {
+    			dsDat.add(pv.getHoSo());
+    		}
+    		
+    	}
+    	
+    	return dsDat;
+    }
+    
+    
+    public double tinhDiemPhongVanTB(HoSoUngVien hs) {
+    	if(hs == null) {
+    		return 0;
+    	}
+    	
+    	double tong = 0;
+    	int cnt = 0;
+    	
+    	for(PhongVan pv : dsPhongVan) {
+    		if(pv != null && hs.equals(pv.getHoSo()) && PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan())) {
+    			tong += pv.getDiemPhongVan();
+    			cnt++;
+    		}
+    	}
+    	
+    	return cnt == 0 ? 0 : tong / cnt;
+    }
     
     public String toString() {
     	String res = "";
