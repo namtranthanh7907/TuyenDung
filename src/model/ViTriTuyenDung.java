@@ -9,11 +9,21 @@ import java.util.*;
  * 
  */
 public class ViTriTuyenDung {
+	
+	public static final String TC_TONG_DIEM = "TONG_DIEM";
+	public static final String TC_DIEM_HO_SO = "DIEM_HO_SO";
+	public static final String TC_DIEM_PHONG_VAN = "DIEM_PHONG_VAN";
+	
+	
+	
+	public static final double HE_SO_HO_SO = 0.4;
+	public static final double HE_SO_PHONG_VAN = 0.6;
 
     /**
      * Default constructor
      */
     public ViTriTuyenDung() {
+    	this("", "", 0, 0, 0, "", "");
     }
 
     /**
@@ -239,7 +249,7 @@ public class ViTriTuyenDung {
 
 
 	public void setDsPhongVan(ArrayList<PhongVan> dsPhongVan) {
-		this.dsPhongVan = dsPhongVan;
+		this.dsPhongVan = (dsPhongVan == null) ? new ArrayList<>() : dsPhongVan;
 	}
 
 
@@ -455,11 +465,11 @@ public class ViTriTuyenDung {
     }
     
     private String taoMaPhongVan(int vong, HoSoUngVien hs) {
-    	return (maViTri == null ? "" : maViTri) + " -V" + vong + "-" + hs.getMaHS();
+    	return (maViTri == null ? "" : maViTri) + "-V" + vong + "-" + hs.getMaHS();
     }
     
     public double tinhDiemHoSo(HoSoUngVien hs) {
-    	if(hs == null || dsHoSoUngVien == null) {
+    	if(hs == null || dsYeuCauTuyenDung == null) {
     		return 0;
     	}
     	
@@ -621,7 +631,7 @@ public class ViTriTuyenDung {
     	ArrayList<HoSoUngVien> res = new ArrayList<>();
     	
     	for(PhongVan pv : layPhongVanTheoVong(vong)) {
-    		if(pv.getHoSo() != null || !PhongVan.TT_HUY.equals(pv.getTrangThaiPhongVan())) {
+    		if(pv.getHoSo() != null && !PhongVan.TT_HUY.equals(pv.getTrangThaiPhongVan())) {
     			res.add(pv.getHoSo());
     		}
     	}
@@ -651,7 +661,7 @@ public class ViTriTuyenDung {
     public ArrayList<HoSoUngVien> chotKetQuaVong(int vong, double diemChuan) {
     	ArrayList<HoSoUngVien> dsDat = new ArrayList<>();
     	
-    	for(PhongVan pv : dsPhongVan) {
+    	for(PhongVan pv : layPhongVanTheoVong(vong)) {
     		if(pv.getHoSo() == null || !PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan())) {
     			continue;
     		}
@@ -699,6 +709,88 @@ public class ViTriTuyenDung {
     	}
     	
     	return cnt == 0 ? 0 : tong / cnt;
+    }
+    
+    public double tinhDiemTongKet(HoSoUngVien hs) {
+    	if(hs == null) {
+    		return 0;
+    	}
+    	
+    	return HE_SO_HO_SO * tinhDiemHoSo(hs) + HE_SO_PHONG_VAN * tinhDiemPhongVanTB(hs);
+    }
+    
+    private void capNhatKetQua() {
+    	for(KetQuaUngTuyen kq : dsKetQua) {
+    		if(kq == null || kq.getHoSo() == null) {
+    			continue;
+    		}
+    		
+    		kq.setDiemHoSo(tinhDiemHoSo(kq.getHoSo()));
+    		kq.setDiemPhongVan(tinhDiemPhongVanTB(kq.getHoSo()));
+    		kq.setDiemHoSo(tinhDiemTongKet(kq.getHoSo()));
+    	}
+    }
+    
+    private double layDiemTheoTieuChi(KetQuaUngTuyen kq, String tieuChi) {
+    	if(TC_DIEM_HO_SO.equals(tieuChi)) {
+    		return kq.getDiemHoSo();
+    	}
+    	
+    	if(TC_DIEM_PHONG_VAN.equals(tieuChi)) {
+    		return kq.getDiemPhongVan();
+    	}
+    	
+    	return kq.getDiemTongKet();
+    }
+    
+    
+    private String maHSCuaKetQua(KetQuaUngTuyen kq) {
+    	if(kq.getHoSo() == null || kq.getHoSo().getMaHS() == null) {
+    		return "";
+    	}
+    	
+    	return kq.getHoSo().getMaHS();
+    }
+    
+    private Comparator<KetQuaUngTuyen> soSanhXepHang(final String tieuChi) {
+    	return new Comparator<KetQuaUngTuyen>() {
+			
+			@Override
+			public int compare(KetQuaUngTuyen o1, KetQuaUngTuyen o2) {
+				int c = Double.compare(layDiemTheoTieuChi(o2, tieuChi), layDiemTheoTieuChi(o1, tieuChi));
+				
+				if(c != 0) {
+					return c;
+				}
+				
+				c = Double.compare(o2.getDiemHoSo(), o1.getDiemHoSo());
+				
+				if(c != 0) {
+					return c;
+				}
+				
+				return maHSCuaKetQua(o1).compareTo(maHSCuaKetQua(o2));
+			}
+						
+			
+		};
+    }
+    
+    
+    public ArrayList<KetQuaUngTuyen> xepHangUngVien(String tieuChi) {
+    	capNhatKetQua();
+    	
+    	ArrayList<KetQuaUngTuyen> res = new ArrayList<>();
+    	
+    	for(KetQuaUngTuyen kq : dsKetQua) {
+    		if(kq != null && kq.getHoSo() != null && !KetQuaUngTuyen.TT_LOAI.equals(kq.getTrangThaiUngTuyen())) {
+    			res.add(kq);
+    		}
+    	}
+    	
+    	Collections.sort(res, soSanhXepHang(tieuChi));
+    	
+    	return res;
     }
     
     public String toString() {
@@ -757,6 +849,105 @@ public class ViTriTuyenDung {
     	
     	return res;
     }
+    
+    public static void demoTuyenChon() {
+    	
+    	ViTriTuyenDung vt = new ViTriTuyenDung("Java Developer", "TPHCM", 2, 2500, 1200, "VT01", "Lap trinh backend");
+    	
+    	YC_KNghiem ycKN = new YC_KNghiem("Công nghệ thông tin", 2);
+    	ycKN.setBatBuoc(true);
+    	ycKN.setDoUuTien(5);
+    	
+    	YC_NgoaiNgu ycNN = new YC_NgoaiNgu("Tiếng Anh", "B2");
+    	ycNN.setDoUuTien(3);
+    	
+    	vt.themYeuCau(ycKN);
+    	vt.themYeuCau(ycNN);
+    	
+    	HoSoUngVien nam = new HoSoUngVien("HS01", "Trần Thành Nam", "7/9/2007", "TPHCM", "Nam", "Đại học",
+    			"nam@gmail.com", "0987654321", "Kỹ sư", "Công nghệ thông tin", 1.70, 60.0);
+    	nam.themKinhNghiem("Công nghệ thông tin", 3);
+    	nam.themNgoaiNgu("Tiếng Anh", "B2");
+    	
+    	HoSoUngVien duong = new HoSoUngVien("HS02", "Trương Tùng Dương", "15/3/1996", "TPHCM", "Nam", "Đại học",
+    			"duong@gmail.com", "0123456789", "Kỹ sư", "Công nghệ thông tin", 1.78, 72.0);
+    	duong.themKinhNghiem("Công nghệ thông tin", 2);
+    	duong.themNgoaiNgu("Tiếng Anh", "B1");
+    	
+    	
+    	HoSoUngVien mai = new HoSoUngVien("HS03", "Lê Thị Mai", "25/11/2001", "TPHCM", "Nữ", "Thạc sĩ",
+    			"mai@gmail.com", "0977888999", "Thạc sĩ", "Công nghệ thông tin", 1.65, 52.0);
+    	mai.themKinhNghiem("Công nghệ thông tin", 5);
+    	
+    	HoSoUngVien hung = new HoSoUngVien("HS04", "Phạm Văn Hùng", "12/8/1998", "Hà Nội", "Nam", "Đại học",
+    			"hung@gmail.com", "0934567890", "Kỹ sư", "Công nghệ thông tin", 1.72, 70.0);
+    	hung.themKinhNghiem("Công nghệ thông tin", 4);
+    	hung.themNgoaiNgu("Tiếng Anh", "C1");
+      
+    	System.out.println("=====  LOC HO SO =====");
+    	System.out.println("Nộp hồ sơ: Nam=" + vt.nopHoSo(nam) + ", Dương=" + vt.nopHoSo(duong)
+    			+ ", Mai=" + vt.nopHoSo(mai) + ", Hùng=" + vt.nopHoSo(hung));
+    	
+    	for(KetQuaUngTuyen kq : vt.xetDuyetHoSo()) {
+    		System.out.println(kq);
+    	}
+    	
+    	
+    	System.out.println("\n=====  PHONG VAN VONG 1 (chuan 6.0) =====");
+    	ArrayList<HoSoUngVien> dsMoi = new ArrayList<>(Arrays.asList(nam, duong, mai, hung));
+    	
+    	System.out.println("Số cuộc phỏng vấn tạo được: "
+    			+ vt.taoLichPhongVan(1, "20/11/2026", "9:00", "Online", "Zoom", "Anh Hùng", dsMoi));
+    	
+    	vt.chamDiemPhongVan("VT01-V1-HS01", 8.0, "Tốt");
+    	vt.chamDiemPhongVan("VT01-V1-HS02", 5.0, "Yếu kỹ thuật");
+    	vt.chamDiemPhongVan("VT01-V1-HS03", 7.0, "Khá");
+    	vt.chamDiemPhongVan("VT01-V1-HS04", 6.5, "Đạt");
+    	
+    	ArrayList<HoSoUngVien> dat1 = vt.chotKetQuaVong(1, 6.0);
+    	System.out.print("Đạt vòng 1:");
+    	for(HoSoUngVien hs : dat1) {
+    		System.out.print(" " + hs.getHoTen() + ";");
+    	}
+    	System.out.println("\nTrạng thái Dương: " + vt.timKetQua("HS02").getTrangThaiUngTuyen() + " (mong đợi: Loai)");
+    	
+    	
+    	
+    	System.out.println("\n=====  PHONG VAN VONG 2 (chuan 7.0) =====");
+    	System.out.println("Thử xếp Dương (đã bị loại) vào vòng 2, số cuộc tạo được: "
+    			+ vt.taoLichPhongVan(2, "25/11/2026", "14:00", "Trực tiếp", "Phòng 301", "Chị Lan", new ArrayList<>(Arrays.asList(duong))) + " (mong đợi: 0)");
+    	System.out.println("Số cuộc phỏng vấn vòng 2 tạo được: "
+    			+ vt.taoLichPhongVan(2, "25/11/2026", "14:00", "Trực tiếp", "Phòng 301", "Chị Lan", dat1));
+    	
+    	vt.chamDiemPhongVan("VT01-V2-HS01", 9.0, "Rất tốt");
+    	vt.chamDiemPhongVan("VT01-V2-HS03", 7.5, "Khá");
+    	vt.chamDiemPhongVan("VT01-V2-HS04", 7.0, "Đạt");
+    	
+    	ArrayList<HoSoUngVien> dat2 = vt.chotKetQuaVong(2, 7.0);
+    	System.out.print("Đạt vòng 2:");
+    	for(HoSoUngVien hs : dat2) {
+    		System.out.print(" " + hs.getHoTen() + ";");
+    	}
+    	System.out.println();
+    	
+    	for(PhongVan pv : vt.layPhongVanTheoVong(2)) {
+    		System.out.println(pv);
+    	}
+    	
+    	System.out.println("\n=====  XEP HANG =====");
+    	String[] tieuChi = { TC_TONG_DIEM, TC_DIEM_PHONG_VAN, TC_DIEM_HO_SO };
+    	
+    	for(String tc : tieuChi) {
+    		System.out.println("-- Theo " + tc + ":");
+    		
+    		int hang = 1;
+    		for(KetQuaUngTuyen kq : vt.xepHangUngVien(tc)) {
+    			System.out.println(hang++ + ". " + kq);
+    		}
+    	}
+    	
+	}
+    
     
     public static void main(String[] args) {
     	HoSoUngVien hs1 = new HoSoUngVien(
@@ -856,10 +1047,9 @@ public class ViTriTuyenDung {
 
     	System.out.println(vt1);
     	
-      
-      
+    	System.out.println();
     	
-    	
+    	demoTuyenChon();
 	}
     
     
