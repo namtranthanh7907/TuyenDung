@@ -31,6 +31,16 @@ public class YC_NgoaiNgu extends AYeuCauTuyenDung {
 		this.trinhDoToiThieu = trinhDoToiThieu;
 	}
 
+    
+    
+	public YC_NgoaiNgu(String maYeuCau, int doUuTien, boolean batBuoc, String tenNgoaiNgu, String trinhDoToiThieu) {
+		super(maYeuCau, doUuTien, batBuoc);
+		this.tenNgoaiNgu = tenNgoaiNgu;
+		this.trinhDoToiThieu = trinhDoToiThieu;
+	}
+
+
+
 	public String getTenNgoaiNgu() {
 		return tenNgoaiNgu;
 	}
@@ -93,6 +103,11 @@ public class YC_NgoaiNgu extends AYeuCauTuyenDung {
         	return 1.0;
         }
         return (uv + 1.0) / (yc + 1.0);
+    }
+    
+    public String toString() {
+    	return "Yeu cau ngoai ngu: " + tenNgoaiNgu + " tu " + trinhDoToiThieu
+    				+ " tro len (" + super.toString() + ")";
     }
 
 }

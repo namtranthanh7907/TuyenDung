@@ -320,8 +320,18 @@ public class ViTriTuyenDung {
         	return false;
         }
         
-        HoSoUngVien hs = timHoSo(maHoSo);
-        return dsHoSoUngVien.remove(hs);
+        Iterator<HoSoUngVien> it = dsHoSoUngVien.iterator();
+        
+        while(it.hasNext()) {
+        	HoSoUngVien hs = it.next();
+        	
+        	if(hs != null && maHoSo.trim().equals(hs.getMaHS())) {
+        		it.remove();
+        		return true;
+        	}
+        }
+        
+        return false;
         
         
     }
@@ -552,7 +562,7 @@ public class ViTriTuyenDung {
     		kq.setDiemHoSo(diem);
     		
     		if(!coPhongVan(hs)) {
-    			kq.setDiemHoSo(diem);
+    			kq.setDiemTongKet(tinhDiemTongKet(hs));
     			kq.setNgayDanhGia(homNay());
     			kq.capNhatTrangThai(dat ? KetQuaUngTuyen.TT_DAT_HO_SO : KetQuaUngTuyen.TT_LOAI);
     		}

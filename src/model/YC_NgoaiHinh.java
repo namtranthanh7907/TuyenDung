@@ -41,6 +41,19 @@ public class YC_NgoaiHinh extends AYeuCauTuyenDung {
 		this.canNangMin = canNangMin;
 		this.canNangMax = canNangMax;
 	}
+    
+    
+
+	public YC_NgoaiHinh(String maYeuCau, int doUuTien, boolean batBuoc, double chieuCaoMin, double chieuCaoMax,
+			double canNangMin, double canNangMax) {
+		super(maYeuCau, doUuTien, batBuoc);
+		this.chieuCaoMin = chieuCaoMin;
+		this.chieuCaoMax = chieuCaoMax;
+		this.canNangMin = canNangMin;
+		this.canNangMax = canNangMax;
+	}
+
+
 
 	public double getChieuCaoMin() {
 		return chieuCaoMin;
@@ -100,6 +113,11 @@ public class YC_NgoaiHinh extends AYeuCauTuyenDung {
      */
     public double chamDiemUngVien(HoSoUngVien hs) {
         return kiemTra(hs) ? 1.0 : 0.0;
+    }
+    
+    public String toString() {
+    	return "Yeu cau ngoai hinh: cao " + chieuCaoMin + " - " + chieuCaoMax + " m, nang "
+    				+ canNangMin + " - " + canNangMax + " kg (" + super.toString() + ")";
     }
 
 }

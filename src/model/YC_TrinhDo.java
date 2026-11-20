@@ -25,6 +25,15 @@ public class YC_TrinhDo extends AYeuCauTuyenDung {
 		this.trinhDoYeuCau = trinhDoYeuCau;
 	}
 
+    
+    
+	public YC_TrinhDo(String maYeuCau, int doUuTien, boolean batBuoc, String trinhDoYeuCau) {
+		super(maYeuCau, doUuTien, batBuoc);
+		this.trinhDoYeuCau = trinhDoYeuCau;
+	}
+
+
+
 	public String getTrinhDoYeuCau() {
 		return trinhDoYeuCau;
 	}
@@ -66,4 +75,7 @@ public class YC_TrinhDo extends AYeuCauTuyenDung {
         return kiemTra(hs) ? 1.0 : 0.0;
     }
 
+    public String toString() {
+    	return "Yeu cau trinh do hoc van: tu " + trinhDoYeuCau + " tro len (" + super.toString() + ")";
+    }
 }

@@ -11,6 +11,9 @@ public class YC_BangCap extends AYeuCauTuyenDung {
     /**
      * Default constructor
      */
+	
+	
+	
     public YC_BangCap() {
     }
 
@@ -32,6 +35,13 @@ public class YC_BangCap extends AYeuCauTuyenDung {
 	}
 
     
+	public YC_BangCap(String maYeuCau, int doUuTien, boolean batBuoc, String tenBangCap, String moTaBangCap) {
+		super(maYeuCau, doUuTien, batBuoc);
+		this.tenBangCap = tenBangCap;
+		this.moTaBangCap = moTaBangCap;
+	}
+
+
 	public String getTenBangCap() {
 		return tenBangCap;
 	}
@@ -68,4 +78,8 @@ public class YC_BangCap extends AYeuCauTuyenDung {
         return kiemTra(hs) ? 1.0 : 0.0;
     }
 
+    public String toString() {
+    	return "Yeu cau bang cap: " + tenBangCap + " (" + super.toString() + ")";
+    }
+    
 }

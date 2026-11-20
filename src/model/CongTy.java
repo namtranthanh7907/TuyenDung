@@ -16,7 +16,10 @@ public class CongTy {
      * Default constructor
      */
     public CongTy() {
+    	this("", "", "", 0, "", "", "", "");
     }
+    
+    
 
     /**
      * 
@@ -294,7 +297,10 @@ public class CongTy {
 			@Override
 			public int compare(DotTuyenDung o1, DotTuyenDung o2) {
 				// TODO Auto-generated method stub
-				return o1.getId().compareTo(o2.getId());
+				String a = (o1.getId() == null) ? "" : o1.getId();
+				String b = (o2.getId() == null) ? "" : o2.getId();
+				
+				return a.compareTo(b);
 			}
     		
 		});

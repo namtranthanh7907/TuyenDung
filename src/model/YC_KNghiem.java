@@ -39,6 +39,19 @@ public class YC_KNghiem extends AYeuCauTuyenDung {
 	public String getLinhVucYeuCau() {
 		return linhVucYeuCau;
 	}
+	
+	
+
+	public YC_KNghiem(String maYeuCau, int doUuTien, boolean batBuoc, String linhVucYeuCau, int soNamToiThieu) {
+		super(maYeuCau, doUuTien, batBuoc);
+		if (soNamToiThieu < 0) {
+	        throw new IllegalArgumentException(
+	            "So nam kinh nghiem khong duoc am"
+	        );
+	    }
+		this.linhVucYeuCau = linhVucYeuCau;
+		this.soNamToiThieu = soNamToiThieu;
+	}
 
 	public void setLinhVucYeuCau(String linhVucYeuCau) {
 		this.linhVucYeuCau = linhVucYeuCau;
@@ -80,6 +93,11 @@ public class YC_KNghiem extends AYeuCauTuyenDung {
         }
         
         return Math.min(1.0, (double) hs.laySoNamKinhNghiemTongHop(linhVucYeuCau) / soNamToiThieu);
+    }
+    
+    public String toStirng() {
+    	return "Yeu cau linh vuc: linh vuc " + linhVucYeuCau + ", toi thieu "
+    			+ soNamToiThieu + " nam (" + super.toString() + ")";
     }
 
 }

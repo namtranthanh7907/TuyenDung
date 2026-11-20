@@ -112,7 +112,7 @@ public class PhongVan {
 		this.nguoiPhongVan = nguoiPhongVan;
 		this.trangThaiPhongVan = (trangThaiPhongVan == null) ? TT_CHUA : trangThaiPhongVan;
 		this.diemPhongVan = diemPhongVan;
-		this.nhanXet = nhanXet;
+		this.nhanXet = (nhanXet == null) ? "" : nhanXet;
 		this.ketQuaVongPhongVan = (ketQuaVongPhongVan == null) ? "" : ketQuaVongPhongVan;
 	}
 
@@ -355,12 +355,12 @@ public class PhongVan {
     public String layThongTinPhongVan() {
         String ten = (hoSo == null) ? "" : kiemTraNull(hoSo.getHoTen());
         
-        return kiemTraNull(idPV) + " |  Vong " + vong + " | " + ten
+        return kiemTraNull(idPV) + " | Vong " + vong + " | " + ten
         		+ " | " + kiemTraNull(ngayPhongVan) + " " + kiemTraNull(gioPhongVan)
         		+ " | " + kiemTraNull(hinhThuc) + " - " + kiemTraNull(diaDiem)
         		+ " | Nguoi PV: " + kiemTraNull(nguoiPhongVan)
         		+ " | " + kiemTraNull(trangThaiPhongVan)
-        		+ " | Diem: " + String.format("%.2f", diemPhongVan)
+        		+ " | Diem: " + String.format(Locale.ROOT, "%.2f", diemPhongVan)
         		+ " | KQ: " + kiemTraNull(ketQuaVongPhongVan);
     }
     

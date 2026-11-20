@@ -178,7 +178,7 @@ public class DotTuyenDung {
         }
         
         for(ViTriTuyenDung vt : dsViTriTuyenDung) {
-        	if(vt != null && vt.getMaViTri().equals(maViTri.trim())) {
+        	if(vt != null && maViTri.trim().equals(vt.getMaViTri())) {
         		return vt;
         	}
         }

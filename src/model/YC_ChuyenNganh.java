@@ -17,10 +17,17 @@ public class YC_ChuyenNganh extends AYeuCauTuyenDung {
     /**
      * 
      */
+    
+    
     private String tenChuyenNghanh;
 
     
-    public YC_ChuyenNganh(String tenChuyenNghanh) {
+    public YC_ChuyenNganh(String maYeuCau, int doUuTien, boolean batBuoc, String tenChuyenNghanh) {
+		super(maYeuCau, doUuTien, batBuoc);
+		this.tenChuyenNghanh = tenChuyenNghanh;
+	}
+
+	public YC_ChuyenNganh(String tenChuyenNghanh) {
 		super();
 		this.tenChuyenNghanh = tenChuyenNghanh;
 	}
@@ -49,4 +56,8 @@ public class YC_ChuyenNganh extends AYeuCauTuyenDung {
         return kiemTra(hs) ? 1.0 : 0.0;
     }
 
+    
+    public String toString() {
+    	return "Yeu cau chuyen nganh: " + tenChuyenNghanh + " (" + super.toString() + ")";
+    }
 }

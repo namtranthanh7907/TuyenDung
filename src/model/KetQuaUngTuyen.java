@@ -179,9 +179,9 @@ public class KetQuaUngTuyen {
     	String ten = (hoSo == null || hoSo.getHoTen() == null) ? "" : hoSo.getHoTen();
     	return (maKetQua == null ? "" : maKetQua) + " | " + ten + " | "
     			+ (trangThaiUngTuyen == null ? "" : trangThaiUngTuyen)
-    			+ " | HS=" + String.format("%.2f", diemHoSo)
-    			+ " | PV=" + String.format("%.2f", diemPhongVan)
-    			+ " | TK=" + String.format("%.2f", diemTongKet);
+    			+ " | HS=" + String.format(Locale.ROOT, "%.2f", diemHoSo)
+    			+ " | PV=" + String.format(Locale.ROOT, "%.2f", diemPhongVan)
+    			+ " | TK=" + String.format(Locale.ROOT, "%.2f", diemTongKet);
     }
 
 }

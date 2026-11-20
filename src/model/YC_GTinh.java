@@ -24,6 +24,16 @@ public class YC_GTinh extends AYeuCauTuyenDung {
 		this.gioiTinh = gioiTinh;
 	}
     
+    
+    
+
+	public YC_GTinh(String maYeuCau, int doUuTien, boolean batBuoc, String gioiTinh) {
+		super(maYeuCau, doUuTien, batBuoc);
+		this.gioiTinh = gioiTinh;
+	}
+
+
+
 
 	public String getGioiTinh() {
 		return gioiTinh;
@@ -49,6 +59,10 @@ public class YC_GTinh extends AYeuCauTuyenDung {
      */
     public double chamDiemUngVien(HoSoUngVien hs) {
         return kiemTra(hs) ? 1.0 : 0.0;
+    }
+    
+    public String toString() {
+    	return "Yeu cau gioi tinh: " + gioiTinh + " (" + super.toString() + ")";
     }
 
 }
