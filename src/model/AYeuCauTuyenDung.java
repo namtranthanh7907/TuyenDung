@@ -12,6 +12,7 @@ public abstract class AYeuCauTuyenDung{
      * Default constructor
      */
     public AYeuCauTuyenDung() {
+    	this("", 1, false);
     }
 
     /**
@@ -39,7 +40,7 @@ public abstract class AYeuCauTuyenDung{
 
     public AYeuCauTuyenDung(String maYeuCau, int doUuTien, boolean batBuoc) {
 		super();
-		this.maYeuCau = maYeuCau;
+		this.maYeuCau = maYeuCau == null ? "" : maYeuCau;
 		this.doUuTien = Math.max(1, Math.min(5, doUuTien));
 		this.batBuoc = batBuoc;
 	}

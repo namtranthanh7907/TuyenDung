@@ -26,6 +26,12 @@ public class YC_KNghiem extends AYeuCauTuyenDung {
 
     public YC_KNghiem(String linhVucYeuCau, int soNamToiThieu) {
 		super();
+		if (soNamToiThieu < 0) {
+	        throw new IllegalArgumentException(
+	            "So nam kinh nghiem khong duoc am"
+	        );
+	    }
+		
 		this.linhVucYeuCau = linhVucYeuCau;
 		this.soNamToiThieu = soNamToiThieu;
 	}
@@ -43,6 +49,13 @@ public class YC_KNghiem extends AYeuCauTuyenDung {
 	}
 
 	public void setSoNamToiThieu(int soNamToiThieu) {
+		
+		if (soNamToiThieu < 0) {
+	        throw new IllegalArgumentException(
+	            "So nam kinh nghiem khong duoc am"
+	        );
+	    }
+		
 		this.soNamToiThieu = soNamToiThieu;
 	}
 

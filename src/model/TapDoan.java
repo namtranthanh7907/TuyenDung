@@ -328,10 +328,12 @@ public class TapDoan {
     public ArrayList<CongTy> locCongTyTheoLinhVuc(String linhVuc) {
     	ArrayList<CongTy> res = new ArrayList<>();
     	
-    	linhVuc = linhVuc.trim();
-    	if(linhVuc == null) {
+    	
+    	if(linhVuc == null || linhVuc.trim().isEmpty()) {
     		return res;
     	}
+    	
+    	linhVuc = linhVuc.trim();
     	
     	ArrayList<CongTy> ds = layDanhSachCongTy();
     	

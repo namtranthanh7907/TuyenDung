@@ -25,7 +25,15 @@ public class YC_Tuoi extends AYeuCauTuyenDung {
     private int maxTuoi;
 
     public YC_Tuoi(int minTuoi, int maxTuoi) {
-		super();
+		
+    	super();
+		
+    	if (minTuoi < 0 || maxTuoi < minTuoi) {
+            throw new IllegalArgumentException(
+                "Khoang tuoi khong hop le"
+            );
+        }
+    	
 		this.minTuoi = minTuoi;
 		this.maxTuoi = maxTuoi;
 	}
@@ -51,12 +59,12 @@ public class YC_Tuoi extends AYeuCauTuyenDung {
      * @return
      */
     public boolean kiemTra(HoSoUngVien hs) {
-        if(hs == null){
+        if(hs == null || minTuoi < 0 || maxTuoi < minTuoi){
         	return false;
         }
         
         int tuoi = hs.tinhTuoi();
-        return tuoi >= 0 && tuoi >= minTuoi && tuoi <= maxTuoi;
+        return tuoi >= minTuoi && tuoi <= maxTuoi;
     }
 
     /**

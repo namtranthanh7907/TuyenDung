@@ -16,6 +16,7 @@ public class DotTuyenDung {
      * Default constructor
      */
     public DotTuyenDung() {
+    	this.dsViTriTuyenDung = new ArrayList<>();
     }
 
     /**
@@ -56,7 +57,7 @@ public class DotTuyenDung {
 		this.id = id;
 		this.ngayDang = ngayDang;
 		this.ngayHetHan = ngayHetHan;
-		this.dsViTriTuyenDung = dsViTriTuyenDung;
+		this.dsViTriTuyenDung = (dsViTriTuyenDung == null) ? new ArrayList<>() : dsViTriTuyenDung;
 		this.tenDot = tenDot;
 		this.moTaDot = moTaDot;
 	}
@@ -105,7 +106,7 @@ public class DotTuyenDung {
 	}
 
 	public void setDsViTriTuyenDung(ArrayList<ViTriTuyenDung> dsViTriTuyenDung) {
-		this.dsViTriTuyenDung = dsViTriTuyenDung;
+		this.dsViTriTuyenDung = (dsViTriTuyenDung == null) ? new ArrayList<>() : dsViTriTuyenDung;
 	}
 
 	public String getTenDot() {
@@ -131,8 +132,12 @@ public class DotTuyenDung {
 	
 	//them vi tri tuyen dung
     public boolean themViTri(ViTriTuyenDung vt) {
-        if(vt == null) {
+        if(vt == null || vt.getMaViTri() == null || vt.getMaViTri().trim().isEmpty()) {
         	return false;
+        }
+        
+        if(dsViTriTuyenDung == null) {
+        	dsViTriTuyenDung = new ArrayList<>();
         }
         
         if(timViTri(vt.getMaViTri()) != null) {
@@ -168,11 +173,12 @@ public class DotTuyenDung {
     
     //tim vi tri tuyen dung dua vao ma vi tri tuyen dung
     public ViTriTuyenDung timViTri(String maViTri) {
-        if(maViTri == null) {
+        if(maViTri == null || maViTri.trim().isEmpty() || dsViTriTuyenDung == null) {
         	return null;
         }
+        
         for(ViTriTuyenDung vt : dsViTriTuyenDung) {
-        	if(vt.getMaViTri().equals(maViTri)) {
+        	if(vt != null && vt.getMaViTri().equals(maViTri.trim())) {
         		return vt;
         	}
         }

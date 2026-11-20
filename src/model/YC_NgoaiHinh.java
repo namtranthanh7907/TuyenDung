@@ -32,7 +32,7 @@ public class YC_NgoaiHinh extends AYeuCauTuyenDung {
     /**
      * 
      */
-    public double canNangMax;
+    private double canNangMax;
 
     public YC_NgoaiHinh(double chieuCaoMin, double chieuCaoMax, double canNangMin, double canNangMax) {
 		super();
@@ -83,10 +83,14 @@ public class YC_NgoaiHinh extends AYeuCauTuyenDung {
         	return false;
         }
         
+        if(chieuCaoMin < 0 || chieuCaoMax < chieuCaoMin || canNangMin < 0 || canNangMax < canNangMin) {
+        	return false;
+        }
+        
         double cao = hs.getChieuCao();
         double canNang = hs.getCanNang();
         return cao > 0 && canNang > 0
-        		&& cao > chieuCaoMin && cao <= chieuCaoMax
+        		&& cao >= chieuCaoMin && cao <= chieuCaoMax
         		&& canNang >= canNangMin && canNang <= canNangMax;
     }
 

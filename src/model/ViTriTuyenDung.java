@@ -199,7 +199,7 @@ public class ViTriTuyenDung {
 
 
 	public void setDsHoSoUngVien(HashSet<HoSoUngVien> dsHoSoUngVien) {
-		this.dsHoSoUngVien = dsHoSoUngVien;
+		this.dsHoSoUngVien = (dsHoSoUngVien == null) ? new HashSet<>() : dsHoSoUngVien;
 	}
 
 
@@ -209,7 +209,19 @@ public class ViTriTuyenDung {
 
 
 	public void setDsYeuCauTuyenDung(PriorityQueue<AYeuCauTuyenDung> dsYeuCauTuyenDung) {
-		this.dsYeuCauTuyenDung = dsYeuCauTuyenDung;
+		this.dsYeuCauTuyenDung = new PriorityQueue<>(new Comparator<AYeuCauTuyenDung>() {
+
+			@Override
+			public int compare(AYeuCauTuyenDung o1, AYeuCauTuyenDung o2) {
+				return Integer.compare(o2.getDoUuTien(), o1.getDoUuTien());
+			}
+			
+			
+		});
+		
+		if(dsYeuCauTuyenDung != null) {
+			this.dsYeuCauTuyenDung.addAll(dsYeuCauTuyenDung);
+		}
 	}
 
 
@@ -239,7 +251,7 @@ public class ViTriTuyenDung {
 
 
 	public void setDsKetQua(ArrayList<KetQuaUngTuyen> dsKetQua) {
-		this.dsKetQua = dsKetQua;
+		this.dsKetQua = (dsKetQua == null) ? new ArrayList<>() : dsKetQua;
 	}
 
 
@@ -661,6 +673,10 @@ public class ViTriTuyenDung {
     public ArrayList<HoSoUngVien> chotKetQuaVong(int vong, double diemChuan) {
     	ArrayList<HoSoUngVien> dsDat = new ArrayList<>();
     	
+    	if(vong < 1 || Double.isNaN(diemChuan) || diemChuan < 0 || diemChuan > 10) {
+    		return dsDat;
+    	}
+    	
     	for(PhongVan pv : layPhongVanTheoVong(vong)) {
     		if(pv.getHoSo() == null || !PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan())) {
     			continue;
@@ -725,9 +741,16 @@ public class ViTriTuyenDung {
     			continue;
     		}
     		
-    		kq.setDiemHoSo(tinhDiemHoSo(kq.getHoSo()));
-    		kq.setDiemPhongVan(tinhDiemPhongVanTB(kq.getHoSo()));
-    		kq.setDiemHoSo(tinhDiemTongKet(kq.getHoSo()));
+    		HoSoUngVien hs = kq.getHoSo();
+    		
+    		double diemHoSo = tinhDiemHoSo(hs);
+    		double diemPhongVan = tinhDiemPhongVanTB(hs);
+    		double diemTongKet = HE_SO_HO_SO * diemHoSo + HE_SO_PHONG_VAN * diemPhongVan;
+    		
+    		
+    		kq.setDiemHoSo(diemHoSo);
+    		kq.setDiemPhongVan(diemPhongVan);
+    		kq.setDiemTongKet(diemTongKet);
     	}
     }
     
@@ -778,9 +801,16 @@ public class ViTriTuyenDung {
     
     
     public ArrayList<KetQuaUngTuyen> xepHangUngVien(String tieuChi) {
-    	capNhatKetQua();
     	
     	ArrayList<KetQuaUngTuyen> res = new ArrayList<>();
+    	
+    	if(!TC_TONG_DIEM.equals(tieuChi) && !TC_DIEM_HO_SO.equals(tieuChi) && !TC_DIEM_PHONG_VAN.equals(tieuChi)) {
+    		return res;
+    	}
+    	
+    	capNhatKetQua();
+    	
+    	
     	
     	for(KetQuaUngTuyen kq : dsKetQua) {
     		if(kq != null && kq.getHoSo() != null && !KetQuaUngTuyen.TT_LOAI.equals(kq.getTrangThaiUngTuyen())) {
