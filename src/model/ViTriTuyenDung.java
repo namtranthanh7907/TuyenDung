@@ -736,6 +736,10 @@ public class ViTriTuyenDung {
     }
     
     private void capNhatKetQua() {
+    	if(dsKetQua == null) {
+    		return;
+    	}
+    	
     	for(KetQuaUngTuyen kq : dsKetQua) {
     		if(kq == null || kq.getHoSo() == null) {
     			continue;
