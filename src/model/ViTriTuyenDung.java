@@ -346,7 +346,7 @@ public class ViTriTuyenDung {
         }
         
         for(HoSoUngVien hs : dsHoSoUngVien) {
-        	if(hs.getMaHS().equals(maHoSo)) {
+        	if(maHoSo.equals(hs.getMaHS())) {
         		return hs;
         	}
         }
