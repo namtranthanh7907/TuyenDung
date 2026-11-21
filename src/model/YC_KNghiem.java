@@ -94,8 +94,8 @@ public class YC_KNghiem extends AYeuCauTuyenDung {
         
         return Math.min(1.0, (double) hs.laySoNamKinhNghiemTongHop(linhVucYeuCau) / soNamToiThieu);
     }
-    
-    public String toStirng() {
+    @Override
+    public String toString() {
     	return "Yeu cau linh vuc: linh vuc " + linhVucYeuCau + ", toi thieu "
     			+ soNamToiThieu + " nam (" + super.toString() + ")";
     }

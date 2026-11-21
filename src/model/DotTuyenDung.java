@@ -157,12 +157,18 @@ public class DotTuyenDung {
         if(maViTri == null || maViTri.trim().isEmpty() || dsViTriTuyenDung == null) {
         	return false;
         }
+        
+        String maCanTim = maViTri.trim();
         for(int i = 0; i < dsViTriTuyenDung.size(); i++) {
         	ViTriTuyenDung vt = dsViTriTuyenDung.get(i);
-        	if(vt != null && maViTri.trim().equals(vt.getMaViTri().trim())) {
-        		dsViTriTuyenDung.remove(i);
-        		return true;
-        	}
+        	if (vt == null || vt.getMaViTri() == null) {
+                continue;
+            }
+
+            if (maCanTim.equals(vt.getMaViTri().trim())) {
+                dsViTriTuyenDung.remove(i);
+                return true;
+            }
         }
         return false;
     }
@@ -178,10 +184,16 @@ public class DotTuyenDung {
         	return null;
         }
         
+        String maCanTim = maViTri.trim();
+        
         for(ViTriTuyenDung vt : dsViTriTuyenDung) {
-        	if(vt != null && maViTri.trim().equals(vt.getMaViTri())) {
-        		return vt;
-        	}
+        	if (vt == null || vt.getMaViTri() == null) {
+                continue;
+            }
+
+            if (maCanTim.equals(vt.getMaViTri().trim())) {
+                return vt;
+            }
         }
         return null;
     }
@@ -381,7 +393,7 @@ public class DotTuyenDung {
     //tim vi tri tuyen dung co nhieu ho so ung tuyen nhat
     public ViTriTuyenDung timViTriCoNhieuHoSoNhat() {
     	ViTriTuyenDung vtMax = null;
-    	int maxHoSo = 0;
+    	int maxHoSo = -1;
     	
     	
     	if(dsViTriTuyenDung == null) {

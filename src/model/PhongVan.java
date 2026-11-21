@@ -119,7 +119,7 @@ public class PhongVan {
 		
 		boolean lichHopLe = TienIch.parseNgay(ngayPhongVan) != null && chuyenGio(gioPhongVan) != null;
 		
-		if(TT_DA.equals(trangThaiPhongVan) && diemHopLe & lichHopLe) {
+		if (TT_DA.equals(trangThaiPhongVan) && diemHopLe && lichHopLe) {
 			this.trangThaiPhongVan = TT_DA;
 			this.diemPhongVan = diemPhongVan;
 			this.nhanXet = (nhanXet == null) ? "" : nhanXet;

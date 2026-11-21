@@ -173,12 +173,16 @@ public class TapDoan {
         if(maST == null || maST.trim().isEmpty()) {
         	return false;
         }
-        
+        String maCanTim = maST.trim();
         refresh();
         while(dsCongTy.hasNext()) {
         	CongTy ct = dsCongTy.next();
         	
-        	if(ct != null && maST.equals(ct.getMaST())) {
+        	if(ct == null || ct.getMaST() == null || ct.getMaST().trim().isEmpty()) {
+        		return false;
+        	}
+        	
+        	if(maCanTim.equals(ct.getMaST().trim())) {
         		dsCongTy.remove();
         		return true;
         	}
@@ -196,12 +200,18 @@ public class TapDoan {
     	if (maST == null || maST.trim().isEmpty()) {
             return null;
         }
+    	
+    	String maCanTim = maST.trim();
 
         ArrayList<CongTy> ds = layDanhSachCongTy();
 
         for (CongTy ct : ds) {
-            if (ct != null && maST.trim().equals(ct.getMaST())) {
-                return ct;
+            if (ct == null || ct.getMaST() == null) {
+                continue;
+            }
+            
+            if(maCanTim.equals(ct.getMaST().trim())) {
+            	return ct;
             }
         }
 
@@ -496,7 +506,7 @@ public class TapDoan {
     	for(CongTy ct : ds) {
     		int chiTieu = ct.demTongChiTieuDangTuyen();
     		
-    		if(chiTieu > maxChiTieu) {
+    		if(ctMax == null || chiTieu > maxChiTieu) {
     			maxChiTieu = chiTieu;
     			ctMax = ct;
     		}

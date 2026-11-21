@@ -207,14 +207,21 @@ public class CongTy {
     
     //xoa dot tuyen dung
     public boolean xoaDotTuyenDung(String id) {
-        if(id == null) {
+        if(id == null || id.trim().isEmpty() || dsDotTuyenDung == null) {
         	return false;
         }
+        
+        String maCanTim = id.trim();
+        
         
         for(int i = 0; i < dsDotTuyenDung.size(); i++) {
         	 DotTuyenDung dtd = dsDotTuyenDung.get(i);
 
-             if (dtd != null && id.trim().equals(dtd.getId())) {
+             if (dtd == null || dtd.getId() == null) {
+                 continue;
+             }
+
+             if (maCanTim.equals(dtd.getId().trim())) {
                  dsDotTuyenDung.remove(i);
                  return true;
              }
@@ -233,9 +240,13 @@ public class CongTy {
             return null;
         }
 
+    	String maCanTim = id.trim();
         for (DotTuyenDung dtd : dsDotTuyenDung) {
-            if (dtd != null && id.trim().equals(dtd.getId())) {
-                return dtd;
+            if (dtd == null && dtd.getId() == null) {
+            	continue;
+            }
+            if(maCanTim.equals(dtd.getId().trim())) {
+            	return dtd;
             }
         }
         return null;

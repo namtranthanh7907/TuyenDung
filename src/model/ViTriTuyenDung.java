@@ -524,13 +524,24 @@ public class ViTriTuyenDung {
      * @return
      */
     public boolean xoaPhongVan(String maPV) {
-        if(maPV == null) {
-        	return false;
+    	if (maPV == null || maPV.trim().isEmpty() || dsPhongVan == null) {
+            return false;
         }
+    	
+    	String maCanTim = maPV.trim();
         
         for(int i = 0; i < dsPhongVan.size(); i++) {
         	PhongVan pv = dsPhongVan.get(i);
-        	if(pv != null && pv.getIdPV().equals(maPV)) {
+        	
+        	if(pv == null || pv.getIdPV() == null) {
+        		continue;
+        	}
+        	
+        	if(maCanTim.equals(pv.getIdPV().trim())) {
+        		if(!PhongVan.TT_CHUA.equals(pv.getTrangThaiPhongVan())) {
+        			return false;
+        		}
+        		
         		dsPhongVan.remove(i);
         		return true;
         	}
@@ -550,9 +561,13 @@ public class ViTriTuyenDung {
         String ma = maPV.trim();
         
         for(PhongVan pv : dsPhongVan) {
-        	if(pv != null && ma.equals(pv.getIdPV())) {
-        		return pv;
-        	}
+        	if (pv == null || pv.getIdPV() == null) {
+                continue;
+            }
+
+            if (ma.equals(pv.getIdPV().trim())) {
+                return pv;
+            }
         }
         return null;
     }
@@ -636,12 +651,19 @@ public class ViTriTuyenDung {
     }
     
     public KetQuaUngTuyen timKetQua(String maHS) {
-    	if(maHS == null || dsKetQua == null) {
+    	if(maHS == null || maHS.trim().isEmpty() || dsKetQua == null) {
     		return null;
     	}
     	
+    	String maCanTim = maHS.trim();
+    	
+    	
     	for(KetQuaUngTuyen kq : dsKetQua) {
-    		if(kq != null && kq.getHoSo() != null && maHS.equals(kq.getHoSo().getMaHS())) {
+    		if(kq == null || kq.getHoSo() == null || kq.getHoSo().getMaHS() == null) {
+    			continue;
+    		}
+    		
+    		if(maCanTim.equals(kq.getHoSo().getMaHS().trim())) {
     			return kq;
     		}
     	}

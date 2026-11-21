@@ -376,7 +376,7 @@ public class HoSoUngVien {
     
     //Thêm một quá trình làm việc
     public void themQuaTrinhLamViec(QuaTrinhLamViec qt) {
-        if (qt == null) {
+        if (qt == null || !qt.hopLe()) {
             return;
         }
 
@@ -468,22 +468,36 @@ public class HoSoUngVien {
     //nội dung tóm tắt kinh nghiệm của ứng viên theo lĩnh vực, gồm số thấng, số năm làm việc, chức vụ
     public String tomTatKinhNghiem(String linhVuc) {
         int thang = tinhSoThangLamViec(linhVuc);
-        if (thang == 0) {
-            return hoTen + ": chưa có kinh nghiệm trong lĩnh vực " + linhVuc;
+        
+        int thangKinhNghiem = laySoNamKinhNghiem(linhVuc) * 12;
+        
+        int tongThang = Math.max(thang, thangKinhNghiem);
+        if(tongThang == 0) {
+        	return hoTen + ": chua co kinh nghiem trong linh vuc " + linhVuc;
         }
+        
         StringBuilder sb = new StringBuilder();
         sb.append(hoTen).append(": ");
-        if (thang >= 12) {
-            sb.append(thang / 12).append(" năm ");
+        
+        if (tongThang >= 12) {
+            sb.append(tongThang / 12).append(" năm ");
         }
-        if (thang % 12 > 0) {
-            sb.append(thang % 12).append(" tháng ");
+        if (tongThang % 12 > 0) {
+            sb.append(tongThang % 12).append(" tháng ");
         }
-        sb.append("trong lĩnh vực ").append(linhVuc).append(". Chức vụ: ");
-        String dau = "";
-        for (QuaTrinhLamViec qt : ThongKeKinhNghiem.layQuaTrinhTheoLinhVuc(this, linhVuc)) {
+        sb.append("trong lĩnh vực ").append(linhVuc);
+        
+        ArrayList<QuaTrinhLamViec> ds = ThongKeKinhNghiem.layQuaTrinhTheoLinhVuc(this, linhVuc);
+        
+        if(!ds.isEmpty()) {
+        	sb.append(". Chức vụ: ");
+        	String dau = "";
+        	for (QuaTrinhLamViec qt : ds) {
             sb.append(dau).append(qt.getViTri());
             dau = ", ";
+        	
+        }
+        
         }
         return sb.toString();
     }
