@@ -99,7 +99,7 @@ public class ViTriTuyenDung {
 		this.soLuong = soLuong;
 		this.maxLuong = maxLuong;
 		this.minLuong = minLuong;
-		this.dsHoSoUngVien = (dsHoSoUngVien == null) ? new HashSet<>() : dsHoSoUngVien;
+		this.dsHoSoUngVien = (dsHoSoUngVien == null) ? new HashSet<>() : new HashSet<>(dsHoSoUngVien);
 		this.dsYeuCauTuyenDung = new PriorityQueue<>(new Comparator<AYeuCauTuyenDung>() {
 		    @Override
 		    public int compare(AYeuCauTuyenDung o1, AYeuCauTuyenDung o2) {
@@ -112,8 +112,8 @@ public class ViTriTuyenDung {
 		
 		this.maViTri = maViTri;
 		this.moTaCongViec = moTaCongViec;
-		this.dsKetQua = (dsKetQua == null) ? new ArrayList<>() : dsKetQua;
-		this.dsPhongVan = (dsPhongVan == null) ? new ArrayList<>() : dsPhongVan;
+		this.dsKetQua = (dsKetQua == null) ? new ArrayList<>() : new ArrayList<>(dsKetQua);
+		this.dsPhongVan = (dsPhongVan == null) ? new ArrayList<>() : new ArrayList<>(dsPhongVan);
 	}
     
     
@@ -169,7 +169,9 @@ public class ViTriTuyenDung {
 
 
 	public void setSoLuong(int soLuong) {
-		this.soLuong = soLuong;
+		if(soLuong >= demSoTrungTuyen()) {
+			this.soLuong = soLuong;
+		}	
 	}
 
 
@@ -194,17 +196,31 @@ public class ViTriTuyenDung {
 
 
 	public HashSet<HoSoUngVien> getDsHoSoUngVien() {
-		return dsHoSoUngVien;
+		return dsHoSoUngVien == null ? new HashSet<>() : new HashSet<>(dsHoSoUngVien);
 	}
 
 
 	public void setDsHoSoUngVien(HashSet<HoSoUngVien> dsHoSoUngVien) {
-		this.dsHoSoUngVien = (dsHoSoUngVien == null) ? new HashSet<>() : dsHoSoUngVien;
+		this.dsHoSoUngVien = (dsHoSoUngVien == null) ? new HashSet<>() : new HashSet<>(dsHoSoUngVien);
 	}
 
 
 	public PriorityQueue<AYeuCauTuyenDung> getDsYeuCauTuyenDung() {
-		return dsYeuCauTuyenDung;
+		PriorityQueue<AYeuCauTuyenDung> res = new PriorityQueue<>(new Comparator<AYeuCauTuyenDung>() {
+
+			@Override
+			public int compare(AYeuCauTuyenDung o1, AYeuCauTuyenDung o2) {
+				// TODO Auto-generated method stub
+				return Integer.compare(o2.getDoUuTien(), o1.getDoUuTien());
+			}
+			
+			
+		});
+		if(dsYeuCauTuyenDung != null) {
+			res.addAll(dsYeuCauTuyenDung);
+		}
+		
+		return res;
 	}
 
 
@@ -246,22 +262,22 @@ public class ViTriTuyenDung {
 
 
 	public ArrayList<KetQuaUngTuyen> getDsKetQua() {
-		return dsKetQua;
+		return dsKetQua == null ? new ArrayList<>() : new ArrayList<>(dsKetQua);
 	}
 
 
 	public void setDsKetQua(ArrayList<KetQuaUngTuyen> dsKetQua) {
-		this.dsKetQua = (dsKetQua == null) ? new ArrayList<>() : dsKetQua;
+		this.dsKetQua = (dsKetQua == null) ? new ArrayList<>() : new ArrayList<>(dsKetQua);
 	}
 
 
 	public ArrayList<PhongVan> getDsPhongVan() {
-		return dsPhongVan;
+		return dsPhongVan == null ? new ArrayList<>() : new ArrayList<>(dsPhongVan);
 	}
 
 
 	public void setDsPhongVan(ArrayList<PhongVan> dsPhongVan) {
-		this.dsPhongVan = (dsPhongVan == null) ? new ArrayList<>() : dsPhongVan;
+		this.dsPhongVan = (dsPhongVan == null) ? new ArrayList<>() : new ArrayList<>(dsPhongVan);
 	}
 
 
@@ -448,7 +464,17 @@ public class ViTriTuyenDung {
         double res = 0;
         
         for(AYeuCauTuyenDung yc : dsYeuCauTuyenDung) {
-        	res += yc.chamDiemUngVien(hs) * yc.getDoUuTien();
+        	if(yc == null) {
+        		continue;
+        	}
+        	
+        	double diem = yc.chamDiemUngVien(hs);
+        	
+        	if(Double.isNaN(diem) || diem < 0 || diem > 1) {
+        		return 0;
+        	}
+        	
+        	res += diem * yc.getDoUuTien();
         }
         
         return res;
@@ -578,7 +604,7 @@ public class ViTriTuyenDung {
     		return 0;
     	}
     	
-    	int tongUuTien = 0;
+    	double tongUuTien = 0;
     	
     	for(AYeuCauTuyenDung yc : dsYeuCauTuyenDung) {
     		if(yc != null) {
@@ -917,17 +943,33 @@ public class ViTriTuyenDung {
     		return 0;
     	}
     	
-    	double tong = 0;
-    	int cnt = 0;
+    	double tongDiem = 0;
+    	int soLanPhongVan = 0;
     	
     	for(PhongVan pv : dsPhongVan) {
-    		if(pv != null && hs.equals(pv.getHoSo()) && PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan())) {
-    			tong += pv.getDiemPhongVan();
-    			cnt++;
+    		if(pv == null || pv.getHoSo() == null) {
+    			continue;
     		}
+    		
+    		if(!hs.equals(pv.getHoSo())) {
+    			continue;
+    		}
+    		
+    		if(!PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan())) {
+    			continue;
+    		}
+    		
+    		double diem = pv.getDiemPhongVan();
+    		
+    		if(Double.isNaN(diem) || diem < 0 || diem > 10) {
+    			continue;
+    		}
+    		
+    		tongDiem +=	diem;
+    		soLanPhongVan++;
     	}
     	
-    	return cnt == 0 ? 0 : tong / cnt;
+    	return soLanPhongVan == 0 ? 0 : tongDiem / soLanPhongVan;
     }
     
     public double tinhDiemTongKet(HoSoUngVien hs) {
@@ -952,7 +994,7 @@ public class ViTriTuyenDung {
     		
     		double diemHoSo = tinhDiemHoSo(hs);
     		double diemPhongVan = tinhDiemPhongVanTB(hs);
-    		double diemTongKet = HE_SO_HO_SO * diemHoSo + HE_SO_PHONG_VAN * diemPhongVan;
+    		double diemTongKet = tinhDiemTongKet(hs);
     		
     		
     		kq.setDiemHoSo(diemHoSo);
@@ -962,6 +1004,9 @@ public class ViTriTuyenDung {
     }
     
     private double layDiemTheoTieuChi(KetQuaUngTuyen kq, String tieuChi) {
+    	if(kq == null) {
+    		return 0;
+    	}
     	if(TC_DIEM_HO_SO.equals(tieuChi)) {
     		return kq.getDiemHoSo();
     	}
@@ -975,11 +1020,11 @@ public class ViTriTuyenDung {
     
     
     private String maHSCuaKetQua(KetQuaUngTuyen kq) {
-    	if(kq.getHoSo() == null || kq.getHoSo().getMaHS() == null) {
+    	if(kq == null || kq.getHoSo() == null || kq.getHoSo().getMaHS() == null) {
     		return "";
     	}
     	
-    	return kq.getHoSo().getMaHS();
+    	return kq.getHoSo().getMaHS().trim();
     }
     
     private boolean daDatTatCaCacVong(HoSoUngVien hs, int vongCuoi) {
@@ -1073,6 +1118,17 @@ public class ViTriTuyenDung {
 			
 			@Override
 			public int compare(KetQuaUngTuyen o1, KetQuaUngTuyen o2) {
+				if(o1 == o2) {
+					return 0;
+				}
+				
+				if(o1 == null) {
+					return 1;
+				}
+				if(o2 == null) {
+					return -1;
+				}
+				
 				int c = Double.compare(layDiemTheoTieuChi(o2, tieuChi), layDiemTheoTieuChi(o1, tieuChi));
 				
 				if(c != 0) {
@@ -1097,7 +1153,12 @@ public class ViTriTuyenDung {
     	
     	ArrayList<KetQuaUngTuyen> res = new ArrayList<>();
     	
-    	if(!TC_TONG_DIEM.equals(tieuChi) && !TC_DIEM_HO_SO.equals(tieuChi) && !TC_DIEM_PHONG_VAN.equals(tieuChi)) {
+    	if(!TC_TONG_DIEM.equals(tieuChi) && !TC_DIEM_HO_SO.equals(tieuChi)
+    			&& !TC_DIEM_PHONG_VAN.equals(tieuChi)) {
+    		return res;
+    	}
+    	
+    	if(dsKetQua == null || dsKetQua.isEmpty()) {
     		return res;
     	}
     	
@@ -1106,9 +1167,17 @@ public class ViTriTuyenDung {
     	
     	
     	for(KetQuaUngTuyen kq : dsKetQua) {
-    		if(kq != null && kq.getHoSo() != null && !KetQuaUngTuyen.TT_LOAI.equals(kq.getTrangThaiUngTuyen())) {
-    			res.add(kq);
+    		if(kq == null || kq.getHoSo() == null) {
+    			continue;
     		}
+    		
+    		String trangThai = kq.getTrangThaiUngTuyen();
+    		
+    		if(KetQuaUngTuyen.TT_LOAI.equals(trangThai) || KetQuaUngTuyen.TT_KHONG_TRUNGTUYEN.equals(trangThai)) {
+    			continue;
+    		}
+    		
+    		res.add(kq);
     	}
     	
     	Collections.sort(res, soSanhXepHang(tieuChi));
