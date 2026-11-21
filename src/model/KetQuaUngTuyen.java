@@ -160,6 +160,7 @@ public class KetQuaUngTuyen {
      * @param trangThaiMoi 
      * @return
      */
+	//cap nhat trang thai ung tuyen moi
     public void capNhatTrangThai(String trangThaiMoi) {
         if(trangThaiMoi == null || trangThaiMoi.trim().isEmpty()) {
         	return;
@@ -172,6 +173,8 @@ public class KetQuaUngTuyen {
      * @param diemSan 
      * @return
      */
+    
+    //kiem tra diem
     public boolean kiemTraDatDiemSan(double diemSan) {
         return diemTongKet >= diemSan;
     }

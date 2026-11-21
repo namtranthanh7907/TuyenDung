@@ -264,7 +264,7 @@ public class PhongVan {
 	
 	
 
-
+	//chuyen chuoi gio phong van thanh LocalTime
 	private static LocalTime chuyenGio(String gio) {
 		if(gio == null || gio.trim().isEmpty()) {
 			return null;
@@ -277,6 +277,7 @@ public class PhongVan {
 		}
 	}
 	
+	//kiem mot chuoi ky tu co null hay khong
 	private static String kiemTraNull(String s) {
 		return s == null ? "" : s;
 	}
@@ -290,6 +291,8 @@ public class PhongVan {
      * @param gio 
      * @return
      */
+	
+	//dat lich phong van bang ngay va gio duoc cung cap
     public boolean datLich(String ngay, String gio) {
         if(TT_DA.equals(trangThaiPhongVan) || TT_HUY.equals(trangThaiPhongVan)) {
         	return false;
@@ -322,6 +325,8 @@ public class PhongVan {
      * @param gioMoi 
      * @return
      */
+    
+    //thay doi lich phong van
     public boolean doiLich(String ngayMoi, String gioMoi) {
         return datLich(ngayMoi, gioMoi);
     }
@@ -329,6 +334,8 @@ public class PhongVan {
     /**
      * @return
      */
+    
+    //huy mot cuoc phong van
     public boolean huyPhongVan() {
     	if(TT_DA.equals(trangThaiPhongVan) || TT_HUY.equals(trangThaiPhongVan)) {
         	return false;
@@ -343,6 +350,8 @@ public class PhongVan {
      * @param nhanXet 
      * @return
      */
+    
+    //danh gia ung vien sau phong van bang diem va nhan xet
     public boolean  chamDiem(double diem, String nhanXet) {
         if(Double.isNaN(diem) || diem < 0 || diem > 10) {
         	return false;
@@ -369,6 +378,8 @@ public class PhongVan {
      * @param diemChuan 
      * @return
      */
+    
+    //kiem tra ung vien da dat vong phong van va co diem dat muc hay chua
     public boolean kiemTraDat(double diemChuan) {
     	return TT_DA.equals(trangThaiPhongVan) && diemPhongVan >= diemChuan;
     }
@@ -377,6 +388,8 @@ public class PhongVan {
      * @param ketQua 
      * @return
      */
+    
+    //cap nhat ket qua phong van sau khi da phong van
     public boolean capNhatKetQua(String ketQua) {
     	if(!TT_DA.equals(trangThaiPhongVan)) {
     		return false;
@@ -397,6 +410,8 @@ public class PhongVan {
     /**
      * @return
      */
+    
+    //tra ve thong tin chi tiet cuoc phong van
     public String layThongTinPhongVan() {
         String ten = (hoSo == null) ? "" : kiemTraNull(hoSo.getHoTen());
         

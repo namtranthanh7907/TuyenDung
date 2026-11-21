@@ -289,6 +289,8 @@ public class ViTriTuyenDung {
      * @param yc 
      * @return
      */
+	
+	//them mot yeu cau cua vi tri tuyen dung
     public boolean themYeuCau(AYeuCauTuyenDung yc) {
         if(yc == null) {
         	return false;
@@ -302,6 +304,7 @@ public class ViTriTuyenDung {
      * @param yc 
      * @return
      */
+    //xoa yeu cau tuyen dung duoc chi dinh cua vi tri tuyen dung
     public boolean xoaYeuCau(AYeuCauTuyenDung yc) {
         if(yc == null) {
         	return false;
@@ -314,6 +317,9 @@ public class ViTriTuyenDung {
      * @param hs 
      * @return
      */
+    
+    
+    //tiep nhan ho so sau khi kiem tra thong tin ho so
     public boolean nopHoSo(HoSoUngVien hs) {
         if(hs == null || hs.getMaHS() == null || hs.getMaHS().trim().isEmpty()) {
         	return false;
@@ -338,6 +344,8 @@ public class ViTriTuyenDung {
      * @param maHoSo 
      * @return
      */
+    
+    //xoa ho so ung vien theo ma ho so neu chua co ket qua ung tuyen hoac lich phong van lien quan
     public boolean xoaHoSo(String maHoSo) {
         if(maHoSo == null || maHoSo.trim().isEmpty() || dsHoSoUngVien == null) {
         	return false;
@@ -378,6 +386,8 @@ public class ViTriTuyenDung {
      * @param maHoSo 
      * @return
      */
+    
+    //tim kiem va tra ve ho so ung vien theo ma ho so
     public HoSoUngVien timHoSo(String maHoSo) {
         if(maHoSo == null || maHoSo.trim().isEmpty()) {
         	return null;
@@ -402,6 +412,8 @@ public class ViTriTuyenDung {
      * @param hs 
      * @return
      */
+    
+    //kiem tra ung vien co dap ung duoc yeu cau tuyen dung bat buoc hay khong
     public boolean kiemTraYeuCau(HoSoUngVien hs) {
         if(hs == null) {
         	return false;
@@ -427,6 +439,8 @@ public class ViTriTuyenDung {
     /**
      * @return
      */
+    
+    //loc va tra ve danh sach ho so ung vien dap ung duoc yeu cau tuyen dung
     public ArrayList<HoSoUngVien> locHoSoPhuHop() {
         ArrayList<HoSoUngVien> res = new ArrayList<>();
         
@@ -445,6 +459,8 @@ public class ViTriTuyenDung {
     /**
      * @return
      */
+    
+    //dem so ho so ung vien hien co trong danh sach
     public int demSoLuongUngVien() {
         return dsHoSoUngVien.size();
     }
@@ -452,6 +468,8 @@ public class ViTriTuyenDung {
     /**
      * @return
      */
+    
+    //kiem tra vi tri tuyen dung con chi tieu de tuyen hay khong
     public boolean kiemTraConChiTieu() {
     	return demSoTrungTuyen() < soLuong;
     }
@@ -460,6 +478,8 @@ public class ViTriTuyenDung {
      * @param hs 
      * @return
      */
+    
+    //tinh tong diem dap ung yeu cau cua ung vien dua tren tung tieu chi va do uu tien
     public double tinhTongDiem(HoSoUngVien hs) {
         if(hs == null) {
         	return 0;
@@ -488,6 +508,8 @@ public class ViTriTuyenDung {
      * @param pv 
      * @return
      */
+    
+    //them mot phong van vao danh sach sau khi kiem tra
     public boolean themPhongVan(PhongVan pv) {
         if(pv == null || pv.getIdPV() == null || pv.getIdPV().trim().isEmpty() 
         			|| pv.getHoSo() == null || pv.getViTri() != this) {
@@ -523,6 +545,8 @@ public class ViTriTuyenDung {
      * @param maPV 
      * @return
      */
+    
+    //xoa phong van theo ma phong van
     public boolean xoaPhongVan(String maPV) {
     	if (maPV == null || maPV.trim().isEmpty() || dsPhongVan == null) {
             return false;
@@ -553,6 +577,8 @@ public class ViTriTuyenDung {
      * @param maPV 
      * @return
      */
+    
+    //tim va tra ve mot phong van theo ma phong van
     public PhongVan timPhongVan(String maPV) {
         if(maPV == null || maPV.trim().isEmpty() || dsPhongVan == null) {
         	return null;
@@ -575,24 +601,26 @@ public class ViTriTuyenDung {
     /**
      * @return
      */
+    
+    //lay danh sach phong van
     public ArrayList<PhongVan> layDanhSachPhongVan() {
         return new ArrayList<>(dsPhongVan);
     }
 
     
-    
+    //lay ngay hien tai theo dinh dang
     private String homNay() {
     	return LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
-    
+    //tao ma ket qua ung tuyen dua tuye nma vi tri cua ung vien
     private String taoMaKetQua(HoSoUngVien hs) {
     	return (maViTri == null ? "" : maViTri) + "-" + hs.getMaHS();
     }
-    
+    //tao ma phong van ban dau dua tren ma vi tri. so vong va ho so ung vien
     private String taoMaPhongVan(int vong, HoSoUngVien hs) {
     	return (maViTri == null ? "" : maViTri) + "-V" + vong + "-" + hs.getMaHS();
     }
-    
+    //tao ma phong van khong bi trung lap va bo sung hau to neu do la lan thu 2 tro len
     private String taoMaPhongVanMoi(int vong, HoSoUngVien hs) {
     	String maGoc = taoMaPhongVan(vong, hs);
     	String maMoi = maGoc;
@@ -606,6 +634,7 @@ public class ViTriTuyenDung {
     	return maMoi;
     }
     
+    ///kiem tra ung vien da co lich phong van hay chua
     private boolean coiLichDangHoatDong(HoSoUngVien hs, int vong) {
     	if(hs == null || dsPhongVan == null) {
     		return false;
@@ -628,6 +657,8 @@ public class ViTriTuyenDung {
     	return false;
     }
     
+    
+    //tinh diem ho so ung vien theo thang diem 10
     public double tinhDiemHoSo(HoSoUngVien hs) {
     	if(hs == null || dsYeuCauTuyenDung == null) {
     		return 0;
@@ -650,6 +681,7 @@ public class ViTriTuyenDung {
     	return Math.max(0, Math.min(10, diem));
     }
     
+    //tim va tra ve ket qua ung tuyen thao ma ho so
     public KetQuaUngTuyen timKetQua(String maHS) {
     	if(maHS == null || maHS.trim().isEmpty() || dsKetQua == null) {
     		return null;
@@ -671,7 +703,7 @@ public class ViTriTuyenDung {
     	return null;
     }
     
-    
+    //tim ket qua da ton tai, neu chua thi tao ket qua moi
     private KetQuaUngTuyen layHoacTaoKetQua(HoSoUngVien hs) {
     	KetQuaUngTuyen kq = timKetQua(hs.getMaHS());
     	
@@ -683,6 +715,7 @@ public class ViTriTuyenDung {
     	return kq;
     }
     
+    //kiem tra xem ung vien da co cuoc phong van hay chua
     private boolean coPhongVan(HoSoUngVien hs) {
     	for(PhongVan pv : dsPhongVan) {
     		if(pv != null && hs.equals(pv.getHoSo())) {
@@ -693,6 +726,7 @@ public class ViTriTuyenDung {
     	return false;
     }
     
+    //xet duyet ho so ung vien, kiem tra yeu cau, tinh diem va cap nhat trang thai ung tuyen
     public ArrayList<KetQuaUngTuyen> xetDuyetHoSo() {
     	ArrayList<KetQuaUngTuyen> res = new ArrayList<>();
     	
@@ -739,6 +773,7 @@ public class ViTriTuyenDung {
     	return res;
     }
     
+    //dem tong so ung vien co trang thai trung tuyen
     public int demSoTrungTuyen() {
     	int cnt = 0;
     	
@@ -756,6 +791,7 @@ public class ViTriTuyenDung {
     }
     
     
+    //kiem tra ung vien da hoan thanh va dat yeu cau cua cuoc phong van hay chua
     private boolean daDatVong(HoSoUngVien hs, int vong) {
     	if(hs == null || dsPhongVan == null) {
     		return false;
@@ -778,6 +814,7 @@ public class ViTriTuyenDung {
     	return false;
     }
     
+    //tao lich phong van cho ung vien du dieu kien o vong 1
     public int taoLichPhongVan(int vong, String ngay, String gio, String hinhThuc, String diaDiem,
     		String nguoiPV, ArrayList<HoSoUngVien> dsUngVien) {
     	if(vong < 1 || dsUngVien == null || dsHoSoUngVien == null || dsKetQua == null) {
@@ -852,6 +889,8 @@ public class ViTriTuyenDung {
     	return cnt;
     }
     
+    
+    //loc va tra ve danh sach phong van theo so vong
     public ArrayList<PhongVan> layPhongVanTheoVong(int vong) {
     	ArrayList<PhongVan> res = new ArrayList<>();
     	
@@ -863,6 +902,8 @@ public class ViTriTuyenDung {
     	return res;
     }
     
+    
+    //lay danh sach ung vien theo so vong phong van
     public ArrayList<HoSoUngVien> layDanhSachUngVienPhongVan(int vong) {
     	ArrayList<HoSoUngVien> res = new ArrayList<>();
     	
@@ -874,6 +915,8 @@ public class ViTriTuyenDung {
     	return res;
     }
     
+    
+    //tim phong van va cham diem, cap nhat nhan xet cho ung vien
     public boolean chamDiemPhongVan(String maPV, double diem, String nhanXet) {
     	PhongVan pv = timPhongVan(maPV);
     	
@@ -889,7 +932,7 @@ public class ViTriTuyenDung {
     	return pv.chamDiem(diem, nhanXet);
     }
     
-    
+    //kiem tra phong van da hoan tat theo vong phong van
     private boolean kiemTraVongDaHoanTat(int vong) {
     	if(vong < 1 || dsPhongVan == null) {
     		return false;
@@ -921,6 +964,8 @@ public class ViTriTuyenDung {
     	return coLich;
     }
     
+    
+    //kiem tra xem trong danh sach vong van theo phong da cham diem chua
     private boolean kiemTraVongDaChamDiem(int vong) {
     	if(vong < 1 || dsPhongVan == null) {
     		return false;
@@ -953,6 +998,7 @@ public class ViTriTuyenDung {
     	return coLichHopLe;
     }
     
+    //chot ket qua vong dua tren diem chuan, so vong phong van
     public ArrayList<HoSoUngVien> chotKetQuaVong(int vong, double diemChuan) {
     	ArrayList<HoSoUngVien> dsDat = new ArrayList<>();
     	
@@ -1009,7 +1055,7 @@ public class ViTriTuyenDung {
     	return dsDat;
     }
     
-    
+    //tinh diem trung binh phong van cua ung vien sau khi da hoan thanh cac vong phong van
     public double tinhDiemPhongVanTB(HoSoUngVien hs) {
     	if(hs == null) {
     		return 0;
@@ -1044,6 +1090,8 @@ public class ViTriTuyenDung {
     	return soLanPhongVan == 0 ? 0 : tongDiem / soLanPhongVan;
     }
     
+    
+    //tinh diem tong ket cua ung vien dua tren diem ho so va diem phong van
     public double tinhDiemTongKet(HoSoUngVien hs) {
     	if(hs == null) {
     		return 0;
@@ -1052,6 +1100,8 @@ public class ViTriTuyenDung {
     	return HE_SO_HO_SO * tinhDiemHoSo(hs) + HE_SO_PHONG_VAN * tinhDiemPhongVanTB(hs);
     }
     
+    
+    //cap nhat lai ho so sau khi da co diem ho so, phong van, tong ket
     private void capNhatKetQua() {
     	if(dsKetQua == null) {
     		return;
@@ -1075,6 +1125,8 @@ public class ViTriTuyenDung {
     	}
     }
     
+    
+    //lay diem cua ung vien theo tieu chi duoc chon
     private double layDiemTheoTieuChi(KetQuaUngTuyen kq, String tieuChi) {
     	if(kq == null) {
     		return 0;
@@ -1091,6 +1143,7 @@ public class ViTriTuyenDung {
     }
     
     
+    //lay ma ho so cua ung vien tu ket qua ung tuyen 
     private String maHSCuaKetQua(KetQuaUngTuyen kq) {
     	if(kq == null || kq.getHoSo() == null || kq.getHoSo().getMaHS() == null) {
     		return "";
@@ -1099,6 +1152,8 @@ public class ViTriTuyenDung {
     	return kq.getHoSo().getMaHS().trim();
     }
     
+    
+    //kiem da ung vien da dat toan bo cac vong phong vantu vong dau den vong cuoi hay chua
     private boolean daDatTatCaCacVong(HoSoUngVien hs, int vongCuoi) {
     	if(hs == null || vongCuoi < 1) {
     		return false;
@@ -1113,6 +1168,8 @@ public class ViTriTuyenDung {
     	return true;
     }
     
+    
+    ////kiem tra cac vong phong van da hoan tat het hay chua
     private boolean kiemTraCacVongDaHoanTat(int vongCuoi) {
     	if(vongCuoi < 1) {
     		return false;
@@ -1127,7 +1184,7 @@ public class ViTriTuyenDung {
     	return true;
     }
     
-    
+    //chot ket qua tyuen dung sau vong phong van cuoi cung
     public ArrayList<KetQuaUngTuyen> chotKetQuaTuyenDung(int vongCuoi) {
     	ArrayList<KetQuaUngTuyen> dsTrungTuyen = new ArrayList<>();
     	
@@ -1184,7 +1241,7 @@ public class ViTriTuyenDung {
     			
     	return dsTrungTuyen;
     }
-    
+    //sap xep ket qua tuyen dung theo tieu chi duoc chon
     private Comparator<KetQuaUngTuyen> soSanhXepHang(final String tieuChi) {
     	return new Comparator<KetQuaUngTuyen>() {
 			
@@ -1220,7 +1277,7 @@ public class ViTriTuyenDung {
 		};
     }
     
-    
+    //xep hang ung vien dua theo diem
     public ArrayList<KetQuaUngTuyen> xepHangUngVien(String tieuChi) {
     	
     	ArrayList<KetQuaUngTuyen> res = new ArrayList<>();
