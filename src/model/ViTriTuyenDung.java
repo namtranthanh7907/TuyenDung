@@ -1414,7 +1414,7 @@ public class ViTriTuyenDung {
     	}
     	
     	
-    	System.out.println("\n=====  PHONG VAN VONG 1 (chuan 6.0) =====");
+    	System.out.println("\n=====  PHONG VAN VONG 1 =====");
     	ArrayList<HoSoUngVien> dsMoi = new ArrayList<>(Arrays.asList(nam, duong, mai, hung));
     	
     	System.out.println("Số cuộc phỏng vấn tạo được: "
@@ -1434,7 +1434,7 @@ public class ViTriTuyenDung {
     	
     	
     	
-    	System.out.println("\n=====  PHONG VAN VONG 2 (chuan 7.0) =====");
+    	System.out.println("\n=====  PHONG VAN VONG 2 =====");
     	System.out.println("Thử xếp Dương (đã bị loại) vào vòng 2, số cuộc tạo được: "
     			+ vt.taoLichPhongVan(2, "25/11/2026", "14:00", "Trực tiếp", "Phòng 301", "Chị Lan", new ArrayList<>(Arrays.asList(duong))) + " (mong đợi: 0)");
     	System.out.println("Số cuộc phỏng vấn vòng 2 tạo được: "
