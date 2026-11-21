@@ -154,11 +154,12 @@ public class DotTuyenDung {
     
     //xoa vi tri tuyen dung
     public boolean xoaViTri(String maViTri) {
-        if(maViTri == null) {
+        if(maViTri == null || maViTri.trim().isEmpty() || dsViTriTuyenDung == null) {
         	return false;
         }
         for(int i = 0; i < dsViTriTuyenDung.size(); i++) {
-        	if(dsViTriTuyenDung.get(i).getMaViTri().equals(maViTri)) {
+        	ViTriTuyenDung vt = dsViTriTuyenDung.get(i);
+        	if(vt != null && maViTri.trim().equals(vt.getMaViTri().trim())) {
         		dsViTriTuyenDung.remove(i);
         		return true;
         	}

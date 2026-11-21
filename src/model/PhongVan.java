@@ -1,6 +1,7 @@
 package model;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -252,6 +253,8 @@ public class PhongVan {
 
 	
 	
+
+
 	private static LocalTime chuyenGio(String gio) {
 		if(gio == null || gio.trim().isEmpty()) {
 			return null;
@@ -282,11 +285,14 @@ public class PhongVan {
         	return false;
         }
         
-        if(TienIch.parseNgay(ngay) == null || chuyenGio(gio) == null) {
+        LocalDate ngayPV = TienIch.parseNgay(ngay);
+        
+        if(ngayPV == null || ngayPV.isBefore(LocalDate.now()) || chuyenGio(gio) == null) {
         	return false;
         }
         
-        this.ngayPhongVan = ngay.trim();
+        
+        this.ngayPhongVan = ngayPV.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
         this.gioPhongVan = gio.trim();
         this.trangThaiPhongVan = TT_CHUA;
         return true;
@@ -321,14 +327,25 @@ public class PhongVan {
      * @param nhanXet 
      * @return
      */
-    public void chamDiem(double diem, String nhanXet) {
-        if(Double.isNaN(diem) || diem < 0 || diem > 10 || TT_HUY.equals(trangThaiPhongVan)) {
-        	return;
+    public boolean  chamDiem(double diem, String nhanXet) {
+        if(Double.isNaN(diem) || diem < 0 || diem > 10) {
+        	return false;
+        }
+        
+        if (!TT_CHUA.equals(trangThaiPhongVan)) {
+            return false;
+        }
+        
+        if (TienIch.parseNgay(ngayPhongVan) == null
+                || chuyenGio(gioPhongVan) == null) {
+            return false;
         }
         
         this.diemPhongVan = diem;
         this.nhanXet = (nhanXet == null) ? "" : nhanXet;
         this.trangThaiPhongVan = TT_DA;
+        
+        return true;
     	
     }
 
@@ -344,9 +361,21 @@ public class PhongVan {
      * @param ketQua 
      * @return
      */
-    public void capNhatKetQua(String ketQua) {
-        this.ketQuaVongPhongVan = (ketQua == null) ? "" : ketQua;
-        
+    public boolean capNhatKetQua(String ketQua) {
+    	if(!TT_DA.equals(trangThaiPhongVan)) {
+    		return false;
+    	}
+    	
+    	if(!KQ_DAT.equals(ketQua) && !KQ_KHONG_DAT.equals(ketQua)) {
+    		return false;
+    	}
+    	
+    	if(ketQuaVongPhongVan != null && !ketQuaVongPhongVan.trim().isEmpty()) {
+    		return false;
+    	}
+    	
+        this.ketQuaVongPhongVan = ketQua;
+        return true;
     }
 
     /**

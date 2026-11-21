@@ -295,11 +295,7 @@ public class ViTriTuyenDung {
      * @return
      */
     public boolean nopHoSo(HoSoUngVien hs) {
-        if(hs == null) {
-        	return false;
-        }
-        
-        if(hs.getMaHS() == null || hs.getMaHS().trim().isEmpty()) {
+        if(hs == null || hs.getMaHS() == null || hs.getMaHS().trim().isEmpty()) {
         	return false;
         }
         
@@ -307,11 +303,11 @@ public class ViTriTuyenDung {
         	dsHoSoUngVien = new HashSet<>();
         }
         
-        if(timHoSo(hs.getMaHS()) != null) {
-        	return false;
-        }
+        String maHS = hs.getMaHS().trim();
         
-        if(!kiemTraYeuCau(hs)) {
+        hs.setMaHS(maHS);
+        
+        if(timHoSo(maHS) != null) {
         	return false;
         }
         
@@ -323,8 +319,23 @@ public class ViTriTuyenDung {
      * @return
      */
     public boolean xoaHoSo(String maHoSo) {
-        if(maHoSo == null) {
+        if(maHoSo == null || maHoSo.trim().isEmpty() || dsHoSoUngVien == null) {
         	return false;
+        }
+        
+        String maHS = maHoSo.trim();
+        
+        if(timKetQua(maHS) != null) {
+        	return false;
+        }
+        
+        if(dsPhongVan != null) {
+        	for(PhongVan pv : dsPhongVan) {
+        		if(pv != null && pv.getHoSo() != null && maHS.equals(pv.getHoSo().getMaHS())) {
+        			return false;
+        		}
+        		
+        	}
         }
         
         Iterator<HoSoUngVien> it = dsHoSoUngVien.iterator();
@@ -332,7 +343,7 @@ public class ViTriTuyenDung {
         while(it.hasNext()) {
         	HoSoUngVien hs = it.next();
         	
-        	if(hs != null && maHoSo.trim().equals(hs.getMaHS())) {
+        	if(hs != null && maHS.equals(hs.getMaHS())) {
         		it.remove();
         		return true;
         	}
@@ -376,7 +387,15 @@ public class ViTriTuyenDung {
         	return false;
         }
         
+        if(dsYeuCauTuyenDung == null || dsYeuCauTuyenDung.isEmpty()) {
+        	return true;
+        }
+        
         for(AYeuCauTuyenDung yc : dsYeuCauTuyenDung) {
+        	if(yc == null) {
+        		continue;
+        	}
+        	
         	if(yc.isBatBuoc() && !yc.kiemTra(hs)) {
         		return false;
         	}
@@ -391,8 +410,12 @@ public class ViTriTuyenDung {
     public ArrayList<HoSoUngVien> locHoSoPhuHop() {
         ArrayList<HoSoUngVien> res = new ArrayList<>();
         
+        if(dsHoSoUngVien == null || dsHoSoUngVien.isEmpty()) {
+        	return res;
+        }
+        
         for(HoSoUngVien hs : dsHoSoUngVien) {
-        	if(kiemTraYeuCau(hs)) {
+        	if(hs != null && kiemTraYeuCau(hs)) {
         		res.add(hs);
         	}
         }
@@ -436,7 +459,16 @@ public class ViTriTuyenDung {
      * @return
      */
     public boolean themPhongVan(PhongVan pv) {
-        if(pv == null) {
+        if(pv == null || pv.getIdPV() == null || pv.getIdPV().trim().isEmpty() 
+        			|| pv.getHoSo() == null || pv.getViTri() != this) {
+        	return false;
+        }
+        
+        if(dsPhongVan == null) {
+        	dsPhongVan = new ArrayList<>();
+        }
+        
+        if(timHoSo(pv.getHoSo().getMaHS()) == null) {
         	return false;
         }
         
@@ -471,12 +503,14 @@ public class ViTriTuyenDung {
      * @return
      */
     public PhongVan timPhongVan(String maPV) {
-        if(maPV == null) {
+        if(maPV == null || maPV.trim().isEmpty() || dsPhongVan == null) {
         	return null;
         }
         
+        String ma = maPV.trim();
+        
         for(PhongVan pv : dsPhongVan) {
-        	if(maPV.equals(pv.getIdPV())) {
+        	if(pv != null && ma.equals(pv.getIdPV())) {
         		return pv;
         	}
         }
@@ -502,6 +536,41 @@ public class ViTriTuyenDung {
     
     private String taoMaPhongVan(int vong, HoSoUngVien hs) {
     	return (maViTri == null ? "" : maViTri) + "-V" + vong + "-" + hs.getMaHS();
+    }
+    
+    private String taoMaPhongVanMoi(int vong, HoSoUngVien hs) {
+    	String maGoc = taoMaPhongVan(vong, hs);
+    	String maMoi = maGoc;
+    	
+    	int soLan = 2;
+    	
+    	while(timPhongVan(maMoi) != null) {
+    		maMoi = maGoc + "-L" + soLan;
+    		soLan++;
+    	}
+    	return maMoi;
+    }
+    
+    private boolean coiLichDangHoatDong(HoSoUngVien hs, int vong) {
+    	if(hs == null || dsPhongVan == null) {
+    		return false;
+    	}
+    	
+    	for(PhongVan pv : dsPhongVan) {
+    		if(pv == null || pv.getHoSo() == null) {
+    			continue;
+    		}
+    		
+    		boolean cungUngVien = hs.getMaHS().equals(pv.getHoSo().getMaHS());
+    		boolean cungVong = pv.getVong() == vong;
+    		boolean chuaHuy = !PhongVan.TT_HUY.equals(pv.getTrangThaiPhongVan());
+    		
+    		if(cungUngVien && cungVong && chuaHuy) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
     }
     
     public double tinhDiemHoSo(HoSoUngVien hs) {
@@ -565,24 +634,44 @@ public class ViTriTuyenDung {
     public ArrayList<KetQuaUngTuyen> xetDuyetHoSo() {
     	ArrayList<KetQuaUngTuyen> res = new ArrayList<>();
     	
+    	if(dsHoSoUngVien == null || dsHoSoUngVien.isEmpty()) {
+    		return res;
+    	}
+    	
     	for(HoSoUngVien hs : dsHoSoUngVien) {
     		if(hs == null) {
     			continue;
     		}
     		
     		KetQuaUngTuyen kq = layHoacTaoKetQua(hs);
-    		boolean dat = kiemTraYeuCau(hs);
-    		double diem = tinhDiemHoSo(hs);
-    		kq.setDiemHoSo(diem);
-    		
-    		if(!coPhongVan(hs)) {
-    			kq.setDiemTongKet(tinhDiemTongKet(hs));
-    			kq.setNgayDanhGia(homNay());
-    			kq.capNhatTrangThai(dat ? KetQuaUngTuyen.TT_DAT_HO_SO : KetQuaUngTuyen.TT_LOAI);
+    		if(kq == null) {
+    			continue;
     		}
     		
+    		String trangThai = kq.getTrangThaiUngTuyen();
+    		
+    		
+    		if(!KetQuaUngTuyen.TT_CHO.equals(trangThai) && !KetQuaUngTuyen.TT_DAT_HO_SO.equals(trangThai)) {
+    			continue;
+    		}
+    		
+    		boolean dat = kiemTraYeuCau(hs);
+    		
+    		double diemHoSo = tinhDiemHoSo(hs);
+    		double diemPhongVan = tinhDiemPhongVanTB(hs);
+    		
+    		kq.setDiemHoSo(diemHoSo);
+    		kq.setDiemPhongVan(diemPhongVan);
+    		kq.setDiemTongKet(HE_SO_HO_SO * diemHoSo + HE_SO_PHONG_VAN * diemPhongVan);
+    		
+    		kq.setNgayDanhGia(homNay());
+    		
+    		
     		if(dat) {
+    			kq.capNhatTrangThai(KetQuaUngTuyen.TT_DAT_HO_SO);
     			res.add(kq);
+    		} else {
+    			kq.capNhatTrangThai(KetQuaUngTuyen.TT_LOAI);
     		}
     	}
     	return res;
@@ -606,36 +695,85 @@ public class ViTriTuyenDung {
     
     
     private boolean daDatVong(HoSoUngVien hs, int vong) {
-    	PhongVan pv = timPhongVan(taoMaPhongVan(vong, hs));
+    	if(hs == null || dsPhongVan == null) {
+    		return false;
+    	}
     	
-    	return pv != null && PhongVan.KQ_DAT.equals(pv.getKetQuaVongPhongVan());
+    	for(PhongVan pv : dsPhongVan) {
+    		if(pv == null || pv.getHoSo() == null) {
+    			continue;
+    		}
+    		
+    		boolean cungUngVien = hs.getMaHS().equals(pv.getHoSo().getMaHS());
+    		boolean cungVong = pv.getVong() == vong;
+    		boolean daPhongVan = PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan());
+    		boolean ketQuaDat = PhongVan.KQ_DAT.equals(pv.getTrangThaiPhongVan());
+    		
+    		if(cungUngVien && cungVong && daPhongVan && ketQuaDat) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     public int taoLichPhongVan(int vong, String ngay, String gio, String hinhThuc, String diaDiem,
     		String nguoiPV, ArrayList<HoSoUngVien> dsUngVien) {
-    	if(vong < 1 || dsUngVien == null) {
+    	if(vong < 1 || dsUngVien == null || dsHoSoUngVien == null || dsKetQua == null) {
     		return 0;
     	}
     	
     	int cnt = 0;
     	
     	for(HoSoUngVien hs : dsUngVien) {
-    		if(hs == null || timHoSo(hs.getMaHS()) == null) {
+    		if(hs == null || hs.getMaHS() == null || hs.getMaHS().trim().isEmpty()) {
+    			continue;
+    		}
+    		
+    		HoSoUngVien ungVien = timHoSo(hs.getMaHS());
+    		
+    		if(ungVien == null) {
     			continue;
     		}
     		
     		KetQuaUngTuyen kq = layHoacTaoKetQua(hs);
+    		
+    		if(kq == null) {
+    			continue;
+    		}
+    		
     		String trangThai = kq.getTrangThaiUngTuyen();
     		
-    		if(KetQuaUngTuyen.TT_LOAI.equals(trangThai) || KetQuaUngTuyen.TT_TRUNGTUYEN.equals(trangThai)) {
+    		if(KetQuaUngTuyen.TT_LOAI.equals(trangThai)
+    				|| KetQuaUngTuyen.TT_TRUNGTUYEN.equals(trangThai)
+    				|| KetQuaUngTuyen.TT_KHONG_TRUNGTUYEN.equals(trangThai)) {
+    			continue;
+    			
+    		}
+    		
+    		if(vong == 1) {
+    			boolean duDieuKien = KetQuaUngTuyen.TT_DAT_HO_SO.equals(trangThai)
+    					|| KetQuaUngTuyen.TT_PHONG_VAN.equals(trangThai);
+    			if(!duDieuKien || daDatVong(ungVien, 1)) {
+    				continue;
+    			}
+    		}
+    		
+    		
+    		
+    		if(vong > 1) {
+    			if(!KetQuaUngTuyen.TT_PHONG_VAN.equals(trangThai) || !daDatVong(ungVien, vong - 1)
+    					|| daDatVong(ungVien, vong)) {
+    				continue;
+    			}
+    		}
+    		
+    		if(coiLichDangHoatDong(ungVien, vong)) {
     			continue;
     		}
     		
-    		if(vong > 1 && !daDatVong(hs, vong - 1)) {
-    			continue;
-    		}
+    		String maPhongVan = taoMaPhongVan(vong, ungVien);
     		
-    		PhongVan pv = new PhongVan(taoMaPhongVan(vong, hs), hs, this, "", "",
+    		PhongVan pv = new PhongVan(maPhongVan, ungVien, this, "", "",
     				hinhThuc, diaDiem, nguoiPV, PhongVan.TT_CHUA, 0, "", "");
     		
     		pv.setVong(vong);
@@ -685,13 +823,36 @@ public class ViTriTuyenDung {
     		return false;
     	}
     	
-    	String ketQua = pv.getKetQuaVongPhongVan();
-    	if(ketQua != null && !ketQua.trim().isEmpty()) {
+    	
+    	return pv.chamDiem(diem, nhanXet);
+    }
+    
+    
+    private boolean kiemTraVongDaHoanTat(int vong) {
+    	if(vong < 1 || dsPhongVan == null) {
     		return false;
     	}
     	
-    	pv.chamDiem(diem, nhanXet);
-    	return true;
+    	boolean coiLich = false;
+    	
+    	for(PhongVan pv : dsPhongVan) {
+    		if(pv == null || pv.getVong() != vong) {
+    			continue;
+    		}
+    		
+    		if(PhongVan.TT_HUY.equals(pv.getTrangThaiPhongVan())) {
+    			continue;
+    		}
+    		
+    		coiLich = true;
+    		
+    		if(pv.getHoSo() == null || !PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan())
+    				|| pv.getKetQuaVongPhongVan() == null || pv.getKetQuaVongPhongVan().trim().isEmpty()) {
+    			return false;
+    		}
+    	}
+    	
+    	return coiLich;
     }
     
     public ArrayList<HoSoUngVien> chotKetQuaVong(int vong, double diemChuan) {
@@ -701,30 +862,48 @@ public class ViTriTuyenDung {
     		return dsDat;
     	}
     	
+    	if(!kiemTraVongDaHoanTat(vong)) {
+    		return dsDat;
+    	}
+    	
+    	
+    	HashSet<String> maHoSoDaThem = new HashSet<>();
+    	
     	for(PhongVan pv : layPhongVanTheoVong(vong)) {
-    		if(pv.getHoSo() == null || !PhongVan.TT_DA.equals(pv.getTrangThaiPhongVan())) {
+    		
+    		if(pv == null || pv.getVong() != vong || PhongVan.TT_HUY.equals(pv.getTrangThaiPhongVan())) {
     			continue;
     		}
     		
-    		String ketQua = pv.getKetQuaVongPhongVan();
-    		
-    		if(ketQua == null || ketQua.isEmpty()) {
-    			if(pv.kiemTraDat(diemChuan)) {
-    				pv.capNhatKetQua(PhongVan.KQ_DAT);
-    			} else {
-    				pv.capNhatKetQua(PhongVan.KQ_KHONG_DAT);
-    				
-    				KetQuaUngTuyen kq = timKetQua(pv.getHoSo().getMaHS());
-    				if(kq != null) {
-    					kq.capNhatTrangThai(KetQuaUngTuyen.TT_LOAI);
-    				}
-    			}
+    		if(pv.getHoSo() == null) {
+    			continue;
     		}
     		
     		
+    		String ketQua = pv.getKetQuaVongPhongVan();
     		
-    		if(PhongVan.KQ_DAT.equals(pv.getKetQuaVongPhongVan())) {
-    			dsDat.add(pv.getHoSo());
+    		if(ketQua == null || ketQua.trim().isEmpty()) {
+    			ketQua = pv.kiemTraDat(diemChuan) ? PhongVan.KQ_DAT : PhongVan.KQ_KHONG_DAT;
+    			
+    			if(!pv.capNhatKetQua(ketQua)) {
+    				continue;
+    			}
+    		}
+    		
+    		HoSoUngVien hs = pv.getHoSo();
+    		
+    		KetQuaUngTuyen kq = timKetQua(hs.getMaHS());
+    		
+    		if(PhongVan.KQ_DAT.equals(ketQua)) {
+    			if(kq != null && KetQuaUngTuyen.TT_PHONG_VAN.equals(kq.getTrangThaiUngTuyen())) {
+    				if(maHoSoDaThem.add(hs.getMaHS())) {
+    					dsDat.add(hs);
+    				}
+    			}
+    		} else if(PhongVan.KQ_KHONG_DAT.equals(ketQua)) {
+    			if(kq != null) {
+    				kq.capNhatTrangThai(KetQuaUngTuyen.TT_LOAI);
+    			}
     		}
     		
     	}
@@ -801,6 +980,92 @@ public class ViTriTuyenDung {
     	}
     	
     	return kq.getHoSo().getMaHS();
+    }
+    
+    private boolean daDatTatCaCacVong(HoSoUngVien hs, int vongCuoi) {
+    	if(hs == null || vongCuoi < 1) {
+    		return false;
+    	}
+    	
+    	for(int vong = 1; vong <= vongCuoi; vong++) {
+    		if(!daDatVong(hs, vong)) {
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
+    
+    private boolean kiemTraCacVongDaHoanTat(int vongCuoi) {
+    	if(vongCuoi < 1) {
+    		return false;
+    	}
+    	
+    	for(int vong = 1; vong <= vongCuoi; vong++) {
+    		if(!kiemTraCacVongDaHoanTat(vong)) {
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
+    
+    public ArrayList<KetQuaUngTuyen> chotKetQuaTuyenDung(int vongCuoi) {
+    	ArrayList<KetQuaUngTuyen> dsTrungTuyen = new ArrayList<>();
+    	
+    	if(vongCuoi < 1 || soLuong <= 0 || dsKetQua == null) {
+    		return dsTrungTuyen;
+    	}
+    	
+    	if(!kiemTraCacVongDaHoanTat(vongCuoi)) {
+    		return dsTrungTuyen;
+    	}
+    	
+    	capNhatKetQua();
+    	
+    	ArrayList<KetQuaUngTuyen> dsDuDieuKien = new ArrayList<>();
+    	
+    	for(KetQuaUngTuyen kq : dsKetQua) {
+    		if(kq == null || kq.getHoSo() == null) {
+    			continue;
+    		}
+    		
+    		if(!KetQuaUngTuyen.TT_PHONG_VAN.equals(kq.getTrangThaiUngTuyen())) {
+    			continue;
+    		}
+    		
+    		if(daDatTatCaCacVong(kq.getHoSo(), vongCuoi)) {
+    			dsDuDieuKien.add(kq);
+    		}
+    	}
+    	
+    	Collections.sort(dsDuDieuKien, soSanhXepHang(TC_TONG_DIEM));
+    	
+    	int chiTieuConLai = Math.max(0, soLuong - demSoTrungTuyen());
+    	
+    	
+    	for(int i = 0; i < dsDuDieuKien.size(); i++) {
+    		KetQuaUngTuyen kq = dsDuDieuKien.get(i);
+    		
+    		if(i < chiTieuConLai) {
+    			kq.capNhatTrangThai(KetQuaUngTuyen.TT_TRUNGTUYEN);
+    			
+    			dsTrungTuyen.add(kq);
+    		} else{
+    			kq.capNhatTrangThai(KetQuaUngTuyen.TT_KHONG_TRUNGTUYEN);
+    		}
+    		
+    		kq.setNgayDanhGia(homNay());
+    	}
+    	
+    	for(KetQuaUngTuyen kq : dsKetQua) {
+    		if(kq != null && KetQuaUngTuyen.TT_PHONG_VAN.equals(kq.getTrangThaiUngTuyen())) {
+    			kq.capNhatTrangThai(KetQuaUngTuyen.TT_KHONG_TRUNGTUYEN);
+    			
+    			kq.setNgayDanhGia(homNay());
+    		}
+    	}
+    	return dsTrungTuyen;
     }
     
     private Comparator<KetQuaUngTuyen> soSanhXepHang(final String tieuChi) {

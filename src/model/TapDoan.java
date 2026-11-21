@@ -150,7 +150,7 @@ public class TapDoan {
     //them cong ty
     public boolean themCongTy(CongTy ct) {
         // TODO implement here
-        if(ct == null || ct.getMaST() == null) {
+        if(ct == null || ct.getMaST() == null || ct.getMaST().trim().isEmpty()) {
         	return false;
         }
         
@@ -170,7 +170,7 @@ public class TapDoan {
     
     //xoa cong ty
     public boolean xoaCongTy(String maST) {
-        if(maST == null) {
+        if(maST == null || maST.trim().isEmpty()) {
         	return false;
         }
         

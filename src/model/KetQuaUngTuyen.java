@@ -14,6 +14,7 @@ public class KetQuaUngTuyen {
 	public static final String TT_PHONG_VAN = "Dang phong van";
 	public static final String TT_TRUNGTUYEN = "Trung tuyen";
 	public static final String TT_LOAI = "Loai";
+	public static final String TT_KHONG_TRUNGTUYEN = "Khong trung tuyen";
 
     /**
      * Default constructor

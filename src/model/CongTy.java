@@ -185,7 +185,7 @@ public class CongTy {
 	
 	//them dot tuyen dung
     public boolean themDotTuyenDung(DotTuyenDung dot) {
-        if(dot == null) {
+        if(dot == null || dot.getId() == null || dot.getId().trim().isEmpty()) {
         	return false;
         }
         
