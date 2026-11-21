@@ -498,15 +498,25 @@ public class ViTriTuyenDung {
         	dsPhongVan = new ArrayList<>();
         }
         
-        if(timHoSo(pv.getHoSo().getMaHS()) == null) {
+        HoSoUngVien hs = timHoSo(pv.getHoSo().getMaHS());
+        
+        if(hs == null || hs != pv.getHoSo()) {
         	return false;
         }
+        
+        
         
         if(timPhongVan(pv.getIdPV()) != null) {
         	return false;
         }
         
+        if(coiLichDangHoatDong(hs, pv.getVong())) {
+        	return false;
+        }
+        
         return dsPhongVan.add(pv);
+        
+        
     }
 
     /**
@@ -901,6 +911,10 @@ public class ViTriTuyenDung {
     			continue;
     		}
     		
+    		if(PhongVan.TT_HUY.equals(pv.getTrangThaiPhongVan())) {
+    			continue;
+    		}
+    		
     		coLichHopLe = true;
     		
     		
@@ -1105,6 +1119,12 @@ public class ViTriTuyenDung {
     	
     	capNhatKetQua();
     	
+    	for(KetQuaUngTuyen kq : dsKetQua) {
+    		if(kq != null && KetQuaUngTuyen.TT_TRUNGTUYEN.equals(kq.getTrangThaiUngTuyen())) {
+    			dsTrungTuyen.add(kq);
+    		}
+    	}
+    	
     	ArrayList<KetQuaUngTuyen> dsDuDieuKien = new ArrayList<>();
     	
     	for(KetQuaUngTuyen kq : dsKetQua) {
@@ -1139,14 +1159,7 @@ public class ViTriTuyenDung {
     		
     		kq.setNgayDanhGia(homNay());
     	}
-    	
-    	for(KetQuaUngTuyen kq : dsKetQua) {
-    		if(kq != null && KetQuaUngTuyen.TT_PHONG_VAN.equals(kq.getTrangThaiUngTuyen())) {
-    			kq.capNhatTrangThai(KetQuaUngTuyen.TT_KHONG_TRUNGTUYEN);
     			
-    			kq.setNgayDanhGia(homNay());
-    		}
-    	}
     	return dsTrungTuyen;
     }
     
@@ -1326,7 +1339,7 @@ public class ViTriTuyenDung {
     	ArrayList<HoSoUngVien> dsMoi = new ArrayList<>(Arrays.asList(nam, duong, mai, hung));
     	
     	System.out.println("Số cuộc phỏng vấn tạo được: "
-    			+ vt.taoLichPhongVan(1, "20/11/2026", "9:00", "Online", "Zoom", "Anh Hùng", dsMoi));
+    			+ vt.taoLichPhongVan(1, "25/11/2026", "9:00", "Online", "Zoom", "Anh Hùng", dsMoi));
     	
     	vt.chamDiemPhongVan("VT01-V1-HS01", 8.0, "Tốt");
     	vt.chamDiemPhongVan("VT01-V1-HS02", 5.0, "Yếu kỹ thuật");
@@ -1375,6 +1388,190 @@ public class ViTriTuyenDung {
     		}
     	}
     	
+    	
+    	System.out.println("\n===== CHOT KET QUA TUYEN DUNG =====");
+
+    	ArrayList<KetQuaUngTuyen> dsTrungTuyen =
+    	        vt.chotKetQuaTuyenDung(2);
+
+    	System.out.println("Danh sach trung tuyen:");
+
+    	for (KetQuaUngTuyen kq : dsTrungTuyen) {
+    	    System.out.println(kq);
+    	}
+
+    	System.out.println("Tong so trung tuyen: " + vt.demSoTrungTuyen());
+
+    	System.out.println("\nTrang thai tat ca ung vien:");
+
+    	for (KetQuaUngTuyen kq : vt.getDsKetQua()) {
+    	    System.out.println(kq);
+    	}
+    	
+    	
+    	System.out.println("\n===== KIEM TRA CHOT LAN 2 =====");
+
+    	ArrayList<KetQuaUngTuyen> dsTrungTuyenLan2 =
+    	        vt.chotKetQuaTuyenDung(2);
+
+    	System.out.println("So ung vien tra ve lan 2: "
+    	        + dsTrungTuyenLan2.size());
+
+    	System.out.println("Tong so trung tuyen: "
+    	        + vt.demSoTrungTuyen());
+    	
+    	System.out.println("\n===== KIEM TRA HUY VA DAT LAI LICH =====");
+
+    	ViTriTuyenDung vtTest = new ViTriTuyenDung(
+    	        "Java Developer", "TPHCM", 1, 2500, 1200,
+    	        "VT_TEST", "Kiem tra dat lai lich"
+    	);
+
+    	HoSoUngVien hsTest = new HoSoUngVien(
+    	        "HS_TEST", "Ung vien Test", "1/1/2000",
+    	        "TPHCM", "Nam", "Dai hoc",
+    	        "test@gmail.com", "0900000000",
+    	        "Ky su", "Cong nghe thong tin", 1.70, 60.0
+    	);
+
+    	// 1. Them ho so va xet duyet
+    	System.out.println("Nop ho so: " + vtTest.nopHoSo(hsTest));
+    	System.out.println("Ho so dat: " + vtTest.xetDuyetHoSo().size());
+
+    	// 2. Tao lich phong van lan dau
+    	String ngay1 = LocalDate.now().plusDays(1)
+    	        .format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
+
+    	String ngay2 = LocalDate.now().plusDays(2)
+    	        .format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
+
+    	int lanDau = vtTest.taoLichPhongVan(
+    	        1, ngay1, "9:00", "Online",
+    	        "Zoom", "Nguoi phong van", new ArrayList<>(Arrays.asList(hsTest))
+    	);
+
+    	System.out.println("Tao lich lan dau: " + lanDau);
+
+    	// 3. Tim lich cu va huy
+    	PhongVan pvCu = vtTest.timPhongVan("VT_TEST-V1-HS_TEST");
+
+    	boolean huy = pvCu != null && pvCu.huyPhongVan();
+
+    	System.out.println("Huy lich cu: " + huy);
+
+    	// 4. Tao lai lich
+    	int lanHai = vtTest.taoLichPhongVan(
+    	        1, ngay2, "14:00", "Online",
+    	        "Zoom", "Nguoi phong van", new ArrayList<>(Arrays.asList(hsTest))
+    	);
+
+    	System.out.println("Tao lai lich: " + lanHai);
+
+    	// 5. Kiem tra lich cu va lich moi
+    	for (PhongVan pv : vtTest.layPhongVanTheoVong(1)) {
+    	    System.out.println(pv);
+    	}
+
+    	// 6. Cham diem lich moi va chot vong
+    	boolean chamDiem = vtTest.chamDiemPhongVan(
+    	        "VT_TEST-V1-HS_TEST-L2", 8.0, "Dat yeu cau"
+    	);
+
+    	System.out.println("Cham diem lich moi: " + chamDiem);
+
+    	ArrayList<HoSoUngVien> dsDat = vtTest.chotKetQuaVong(1, 6.0);
+
+    	System.out.println("So ung vien dat vong 1: " + dsDat.size());
+    	
+    	System.out.println("\n===== KIEM TRA CHAM DIEM HAI LAN =====");
+
+    	boolean chamLanHai = vtTest.chamDiemPhongVan(
+    	        "VT_TEST-V1-HS_TEST-L2", 9.0, "Cham lai"
+    	);
+
+    	System.out.println("Cham diem lan 2: " + chamLanHai);
+
+    	PhongVan pvMoi = vtTest.timPhongVan(
+    	        "VT_TEST-V1-HS_TEST-L2"
+    	);
+
+    	System.out.println("Diem hien tai: " + pvMoi.getDiemPhongVan());
+
+
+    	System.out.println("\n===== KIEM TRA TAO LICH TRUNG =====");
+
+    	int lichTrung = vtTest.taoLichPhongVan(
+    	        1, ngay2, "14:00", "Online",
+    	        "Zoom", "Nguoi phong van",
+    	        new ArrayList<>(Arrays.asList(hsTest))
+    	);
+
+    	System.out.println("So lich trung duoc tao: " + lichTrung);
+    	
+    	System.out.println("\n===== KIEM TRA THEM LICH TRUNG TRUC TIEP =====");
+
+    	PhongVan pvTrung = new PhongVan(
+    	        "VT_TEST-V1-HS_TEST-L3",
+    	        hsTest,
+    	        vtTest,
+    	        "",
+    	        "",
+    	        "Online",
+    	        "Zoom",
+    	        "Nguoi phong van",
+    	        PhongVan.TT_CHUA,
+    	        0,
+    	        "",
+    	        ""
+    	);
+
+    	pvTrung.setVong(1);
+    	pvTrung.datLich(ngay2, "15:00");
+
+    	boolean themTrung = vtTest.themPhongVan(pvTrung);
+
+    	System.out.println("Them lich trung truc tiep: " + themTrung);
+    	
+    	System.out.println("\n===== KIEM TRA HUY PHONG VAN DA HOAN THANH =====");
+
+    	PhongVan pvDaCham = vtTest.timPhongVan(
+    	        "VT_TEST-V1-HS_TEST-L2"
+    	);
+
+    	boolean huySauCham = pvDaCham.huyPhongVan();
+
+    	System.out.println("Huy lich da cham diem: " + huySauCham);
+
+    	System.out.println("Trang thai hien tai: "
+    	        + pvDaCham.getTrangThaiPhongVan());
+
+    	System.out.println("Diem hien tai: "
+    	        + pvDaCham.getDiemPhongVan());
+    	
+    	System.out.println("\n===== KIEM TRA SETTER PHONG VAN =====");
+
+    	PhongVan pvSetter = new PhongVan(
+    	        "PV_SETTER_TEST",
+    	        hsTest,
+    	        vtTest,
+    	        ngay2,
+    	        "15:00",
+    	        "Online",
+    	        "Zoom",
+    	        "Nguoi phong van",
+    	        PhongVan.TT_DA,
+    	        8.0,
+    	        "Tot",
+    	        PhongVan.KQ_DAT
+    	);
+
+    	pvSetter.setTrangThaiPhongVan(PhongVan.TT_HUY);
+    	pvSetter.setDiemPhongVan(99);
+    	pvSetter.setKetQuaVongPhongVan("Khong hop le");
+
+    	System.out.println("Trang thai: " + pvSetter.getTrangThaiPhongVan());
+    	System.out.println("Diem: " + pvSetter.getDiemPhongVan());
+    	System.out.println("Ket qua: " + pvSetter.getKetQuaVongPhongVan());
 	}
     
     
