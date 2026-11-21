@@ -2,6 +2,7 @@ package model;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -111,10 +112,29 @@ public class PhongVan {
 		this.hinhThuc = hinhThuc;
 		this.diaDiem = diaDiem;
 		this.nguoiPhongVan = nguoiPhongVan;
-		this.trangThaiPhongVan = (trangThaiPhongVan == null) ? TT_CHUA : trangThaiPhongVan;
-		this.diemPhongVan = diemPhongVan;
-		this.nhanXet = (nhanXet == null) ? "" : nhanXet;
-		this.ketQuaVongPhongVan = (ketQuaVongPhongVan == null) ? "" : ketQuaVongPhongVan;
+		boolean trangThaiHopLe = TT_CHUA.equals(trangThaiPhongVan)
+				|| TT_DA.equals(trangThaiPhongVan) || TT_HUY.equals(trangThaiPhongVan);
+		
+		boolean diemHopLe = !Double.isNaN(diemPhongVan) && diemPhongVan >= 0 && diemPhongVan <= 10;
+		
+		boolean lichHopLe = TienIch.parseNgay(ngayPhongVan) != null && chuyenGio(gioPhongVan) != null;
+		
+		if(TT_DA.equals(trangThaiPhongVan) && diemHopLe & lichHopLe) {
+			this.trangThaiPhongVan = TT_DA;
+			this.diemPhongVan = diemPhongVan;
+			this.nhanXet = (nhanXet == null) ? "" : nhanXet;
+			
+			if(KQ_DAT.equals(ketQuaVongPhongVan) || KQ_KHONG_DAT.equals(ketQuaVongPhongVan)) {
+				this.ketQuaVongPhongVan = ketQuaVongPhongVan;
+			} else {
+				this.ketQuaVongPhongVan = "";
+			}
+		} else {
+			this.trangThaiPhongVan = trangThaiHopLe && TT_HUY.equals(trangThaiPhongVan) ? TT_HUY : TT_CHUA;
+			this.diemPhongVan = 0;
+			this.nhanXet = "";
+			this.ketQuaVongPhongVan = "";
+		}
 	}
 
     
@@ -203,19 +223,12 @@ public class PhongVan {
 	}
 
 
-	public void setTrangThaiPhongVan(String trangThaiPhongVan) {
-		this.trangThaiPhongVan = trangThaiPhongVan;
-	}
-
 
 	public double getDiemPhongVan() {
 		return diemPhongVan;
 	}
 
 
-	public void setDiemPhongVan(double diemPhongVan) {
-		this.diemPhongVan = diemPhongVan;
-	}
 
 
 	public String getNhanXet() {
@@ -233,10 +246,6 @@ public class PhongVan {
 	}
 
 
-	public void setKetQuaVongPhongVan(String ketQuaVongPhongVan) {
-		this.ketQuaVongPhongVan = ketQuaVongPhongVan;
-	}
-
 	
 	
 	
@@ -246,7 +255,8 @@ public class PhongVan {
 	}
 	
 	public void setVong(int vong) {
-		if(vong >= 1) {
+		if(vong >= 1 && TT_CHUA.equals(trangThaiPhongVan)
+				&& (ngayPhongVan == null || ngayPhongVan.trim().isEmpty())) {
 			this.vong = vong;
 		}
 	}
@@ -286,14 +296,20 @@ public class PhongVan {
         }
         
         LocalDate ngayPV = TienIch.parseNgay(ngay);
+        LocalTime gioPV = chuyenGio(gio);
         
-        if(ngayPV == null || ngayPV.isBefore(LocalDate.now()) || chuyenGio(gio) == null) {
+        if(ngayPV == null || gioPV == null) {
         	return false;
         }
         
+        LocalDateTime thoiDiemPV = LocalDateTime.of(ngayPV, gioPV);
+        
+        if(!thoiDiemPV.isAfter(LocalDateTime.now())) {
+        	return false;
+        }    
         
         this.ngayPhongVan = ngayPV.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
-        this.gioPhongVan = gio.trim();
+        this.gioPhongVan = gioPV.format(DateTimeFormatter.ofPattern("H:mm"));
         this.trangThaiPhongVan = TT_CHUA;
         return true;
     }
