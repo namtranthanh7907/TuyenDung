@@ -179,7 +179,7 @@ public class TapDoan {
         	CongTy ct = dsCongTy.next();
         	
         	if(ct == null || ct.getMaST() == null || ct.getMaST().trim().isEmpty()) {
-        		return false;
+        		continue;
         	}
         	
         	if(maCanTim.equals(ct.getMaST().trim())) {

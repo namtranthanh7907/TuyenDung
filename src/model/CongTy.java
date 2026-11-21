@@ -242,7 +242,7 @@ public class CongTy {
 
     	String maCanTim = id.trim();
         for (DotTuyenDung dtd : dsDotTuyenDung) {
-            if (dtd == null && dtd.getId() == null) {
+            if (dtd == null || dtd.getId() == null) {
             	continue;
             }
             if(maCanTim.equals(dtd.getId().trim())) {

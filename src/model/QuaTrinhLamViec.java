@@ -199,8 +199,12 @@ public class QuaTrinhLamViec {
     public boolean hopLe() {
     	LocalDate batDau = layNgayBatDau();
     	LocalDate ketThuc = layNgayKetThuc();
+    	LocalDate homNay = LocalDate.now();
     	
-    	return batDau != null && ketThuc != null && !ketThuc.isBefore(batDau);
+    	return batDau != null && ketThuc != null
+    			&& !batDau.isAfter(homNay)
+    			&& !ketThuc.isAfter(homNay)
+    			&& !ketThuc.isBefore(batDau);
     }
 
     
