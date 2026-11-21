@@ -299,6 +299,13 @@ public class ViTriTuyenDung {
         	return false;
         }
         
+        if(hs.getMaHS() == null || hs.getMaHS().trim().isEmpty()) {
+        	return false;
+        }
+        
+        if(dsHoSoUngVien == null) {
+        	dsHoSoUngVien = new HashSet<>();
+        }
         
         if(timHoSo(hs.getMaHS()) != null) {
         	return false;
@@ -341,12 +348,19 @@ public class ViTriTuyenDung {
      * @return
      */
     public HoSoUngVien timHoSo(String maHoSo) {
-        if(maHoSo == null) {
+        if(maHoSo == null || maHoSo.trim().isEmpty()) {
+        	return null;
+        }
+        
+        if(dsHoSoUngVien == null || dsHoSoUngVien.isEmpty()) {
         	return null;
         }
         
         for(HoSoUngVien hs : dsHoSoUngVien) {
-        	if(maHoSo.equals(hs.getMaHS())) {
+        	if(hs == null || hs.getMaHS() == null) {
+        		continue;
+        	}
+        	if(maHoSo.trim().equals(hs.getMaHS().trim())) {
         		return hs;
         	}
         }
